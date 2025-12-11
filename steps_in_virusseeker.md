@@ -1,10 +1,10 @@
 # Steps in VirusSeeker
 
-STAGE 1: Copy reads tp output directory
+STAGE 1: Copy reads to output directory
 STAGE 2: Quality control with fastp
-STAGE 3a: map reads to reference genome
+STAGE 3a: Map reads to reference genome
 STAGE 3b: Skip host removal, send output to QC
-STAGE 3c: map ONT reads to reference genome
+STAGE 3c: Map ONT reads to reference genome
 STAGE 4a: Perform assembly using metaSPAdes: both paired end and single end reads in the same step
 STAGE 4b: Perform long-read OR hybrid assembly using dragonflye
 STAGE 4c: Perform hybrid assembly using unicycler
@@ -30,8 +30,8 @@ STAGE 20: Parse output for megablast against NT
 STAGE 21: Split input file for blastx against NR
 STAGE 22: Run diamond blastx against NR
 STAGE 23: Parse output for blastx against NR
-STAGE 24: map reads to viral reference genome
-STAGE 24B: map reads to viral reference genome
+STAGE 24: Map reads to viral reference genome
+STAGE 24B: Map reads to viral reference genome
 STAGE 25: Generate Assignment Report
 STAGE 26: Generate Assignment Summary
 STAGE 27: Generate Phage Report
