@@ -54,18 +54,12 @@ perl runVS.pl [output path]/[run name] 1 [slurm CPUS] 0 0 D [s/l/h (read type)] 
 	- The summary file contains all of the above except for the FASTA format sequences
 	- It should be noted that non-viral count (Bacteria, Fungi, etc.) should not be considered as representative of raw sample contents, as these counts are only taken after the viral db filtering steps
 - The Supplemental Outputs folder contains more accurate counts for reads and contigs
-
+	- VirusSeeker originally counted reads (stitched or unstitched) and contigs as "1" sequence
+	- The Supplemental Counts take into account stitching (counting stitched reads as 2) and assembly (counting the reads that were used to assemble the contigs)
+	
 ## Disclaimer
 This work was supported by work unit number A1714.
 
 The views expressed in this article reflect the results of research conducted by the author and do not necessarily reflect the official policy or position of the Department of the Navy, Department of Defense, nor the U.S Government. Several authors are military service members or federal employees of the United States government.
 
 This work was prepared as part of their official duties. Title 17 U.S.C. 105 provides that ‘copyright protection under this title is not available for any work of the United States Government.’ Title 17 U.S.C. 101 defines a U.S. Government work as work prepared by a military service member or employee of the U.S. Government as part of that person's official duties.
-
-	- VirusSeeker originally counted reads (stitched or unstitched) and contigs as "1" sequence
-	- The Supplemental Counts take into account stitching (counting stitched reads as 2) and assembly (counting the reads that were used to assemble the contigs)
-	
-
-
-
-
