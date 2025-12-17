@@ -60,7 +60,7 @@ perl runVS.pl [output path]/[run name] 1 [slurm CPUS] 0 0 D [read type] [sequenc
 	- The Supplemental Counts take into account stitching (counting stitched reads as 2) and assembly (counting the reads that were used to assemble the contigs)
 	
 ## Disclaimer
-This work was supported by work unit number A1714.
+This work was supported by Navy Work Unit Number A1714.
 
 The views expressed in this article reflect the results of research conducted by the author and do not necessarily reflect the official policy or position of the Department of the Navy, Department of Defense, nor the U.S Government. Several authors are military service members or federal employees of the United States government.
 
