@@ -59,6 +59,7 @@ diamond makedb --in nr.gz --db nr.dmnd
 ```
 
 ## Create vhunter_acc.db
+NCBI's taxid files formatted as a SQL database
 ```
 wget -cv -O $vsdir/taxdump/nucl_gb.accession2taxid.gz https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz
 wget -cv -O $vsdir/taxdump/prot.accession2taxid.gz https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/prot.accession2taxid.gz
@@ -67,4 +68,5 @@ pigz -dc nucl_gb.accession2taxid.gz > prot.accession2taxid
 cd $vsdir/taxdump/
 bash $scripts/build_db_acc_taxid_nucl.sh  
 bash $scripts/build_db_acc_taxid_prot.sh
+
 ```
