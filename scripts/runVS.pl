@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 ###############################################################################
-# Author: Kyle Long <kyle.a.long8.ctr@health.mil>
-# Additional Contact: Regina Cer <regina.z.cer.civ@health.mil>
+# Author: BDRD <usn.detrick.nmrc.mbx.genomics-reach-back@health.mil>
 #
 # License:
 # VirusSeeker 2.0 is free software: you can redistribute it and/or modify it
