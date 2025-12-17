@@ -65,7 +65,7 @@ do
         if [[ $organism_bn = 'Virus' ]]
         then
         #    echo "Testing 123!"
-                python $2/normalize_reads_new.py -i $organism/${sample}_AccurateReadCounts.tsv
+                python $2/VS_Read_Counter/normalize_reads.py -i $organism/${sample}_AccurateReadCounts.tsv
         fi;
 done
 #echo "Done!"
