@@ -15,7 +15,7 @@
 
 ## Installation
 ### Setting up the environment:
-- A conda environment needs to be created using the "vs2_env.txt" file  
+- A conda environment needs to be created using the "vs.yml" file  
 		` conda create -n vs --file /path/to/vs.yml`  
 		` conda activate vs`
 - Creating and activating this environment should provide all of the appropriate packages required for setting up and running VirusSeeker 2.0
