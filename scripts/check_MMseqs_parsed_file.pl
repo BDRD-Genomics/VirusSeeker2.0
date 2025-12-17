@@ -1,6 +1,6 @@
 ###############################################################################
-# Author: Kyle Long <kyle.a.long8.ctr@mail.mil>
-# Additional Contact: Regina Cer <regina.z.cer.civ@mail.mil>
+# Author: Kyle Long <kyle.a.long8.ctr@health.mil>
+# Additional Contact: Regina Cer <regina.z.cer.civ@health.mil>
 #
 # License:
 # VirusSeeker 2.0 is free software: you can redistribute it and/or modify it
@@ -96,4 +96,5 @@ sub check_blastnParsed_output {
 
 	return 0; # use 0 to be consistent with Linux convention
 }
+
 
