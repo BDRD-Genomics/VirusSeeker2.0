@@ -60,12 +60,12 @@ cp $1/*AmbiguousReads_all.fa  $1/Supplemental_Outputs/Ambiguous
 for organism in $1/Supplemental_Outputs/*;
 do
 	sample=$(basename $1)
-	python $2/VS_Read_Counter/VS_Read_Counter_qktCopy2.py $1 $organism/*AssignmentReport $organism/${sample}_AccurateReadCounts.tsv
+	python $2/VS_Read_Counter/VS_Read_Counter.py $1 $organism/*AssignmentReport $organism/${sample}_AccurateReadCounts.tsv
         organism_bn=$(basename $organism)
         if [[ $organism_bn = 'Virus' ]]
         then
         #    echo "Testing 123!"
-                python $2/qkt_scripts/normalize_reads_new.py -i $organism/${sample}_AccurateReadCounts.tsv
+                python $2/normalize_reads_new.py -i $organism/${sample}_AccurateReadCounts.tsv
         fi;
 done
 #echo "Done!"
