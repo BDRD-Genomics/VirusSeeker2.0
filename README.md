@@ -58,7 +58,10 @@ perl runVS.pl [output path]/[run name] 1 [slurm CPUS] 0 0 D [read type] [sequenc
 - The Supplemental Outputs folder contains more accurate counts for reads and contigs
 	- VirusSeeker originally counted reads (stitched or unstitched) and contigs as "1" sequence
 	- The Supplemental Counts take into account stitching (counting stitched reads as 2) and assembly (counting the reads that were used to assemble the contigs)
-	
+
+## Contact
+Reachback Support: usn.detrick.nmrc.mbx.genomics-reach-back@health.mil
+
 ## Disclaimer
 This work was supported by Navy Work Unit Number A1714.
 
