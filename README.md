@@ -42,9 +42,11 @@ mv [path to adapter]/adapter.txt [output path]/[run name]/[run_name]_adapter.txt
 ```
 #### Run VirusSeeker:
 ```
-perl runVS.pl [output path]/[run name] 1 [slurm CPUS] 0 0 D [s/l/h (read type)] [m/i (metagenomic vs isolate)]		
+perl runVS.pl [output path]/[run name] 1 [slurm CPUS] 0 0 D [read type] [sequencing type]		
 ```
-- See runVS.pl script for argument options	
+- Read type may be "s", "l" or "h" for short, long or hybrid
+- Sequencing type may be "m", or "i" for metagenomic or isolate
+- See runVS.pl script for more argument options
 
 <br>
 
