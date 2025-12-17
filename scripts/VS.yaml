@@ -1,11 +1,6 @@
 name: vs
 channels:
-  - <unknown>
-  - http://repomaster.genomics.local/repos/conda/r
-  - http://repomaster.genomics.local/repos/conda/anaconda
-  - http://repomaster.genomics.local/repos/conda/bioconda
-  - http://repomaster.genomics.local/repos/conda/conda-forge
-  - http://repomaster.genomics.local/repos/conda/salilab
+  - default
 dependencies:
   - _libgcc_mutex=0.1=conda_forge
   - _openmp_mutex=4.5=1_gnu
