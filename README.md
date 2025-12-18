@@ -2,7 +2,7 @@
 
 ## Summary
 <b> VirusSeeker 2.0 </b> is an updated version of the original [2017 VirusSeeker](https://github.com/guoyanzhao/VirusSeeker-Virome) pipeline that is designed for both virus discovery and virome composition analysis. The pipeline is written in Perl and implemented for high performance computing clusters using SLURM Workload Manager. The README will provide the user with instructions for installation of the proper tools and databases for running VirusSeeker 2.0.
-
+![VirusSeeker 2.0 Visual](./VirusSeeker_2APR2025.drawio.png)
 
 ## Files
 - The VirusSeeker_2.0_scripts directory contains the scripts required to run the pipeline
