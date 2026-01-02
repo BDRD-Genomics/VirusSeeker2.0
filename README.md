@@ -19,7 +19,9 @@
 - A conda environment needs to be created using the "vs.yml" file  
 		` conda create -n vs --file /path/to/vs.yml`  
 		` conda activate vs`
-- Creating and activating this environment should provide all of the appropriate packages required for setting up and running VirusSeeker 2.0
+- Creating and activating this environment should provide majority of the appropriate packages required for setting up and running VirusSeeker 2.0
+- Due to dependency issues, another environment for "dragonflye" will also need to be created
+  		` conda create -n dragonflye --file /path/to/dragonflye.yml`
 - If not already installed, Mamba can be found [here](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) or Conda can be found [here](https://docs.conda.io/projects/conda/en/latest/index.html#install-svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-download-sd-text-primary-viewbox-0-0-16-16-aria-hidden-true-path-fill-rule-evenodd-d-m7-47-10-78a-75-75-0-001-06-0l3-75-3-75a-75-75-0-00-1-06-1-06l8-75-8-44v1-75a-75-75-0-00-1-5-0v6-69l4-78-5-97a-75-75-0-00-1-06-1-06l3-75-3-75zm3-75-13a-75-75-0-000-1-5h8-5a-75-75-0-000-1-5h-8-5z-path-svg)
 	
 ### Installing databases:
