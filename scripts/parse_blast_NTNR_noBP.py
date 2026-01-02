@@ -61,48 +61,74 @@ if (args.input == None):
 bdir = args.dir if args.dir else "."
 if not os.path.exists(bdir):
     os.mkdir(bdir)
-fasta_input = args.dir + args.fasta
+fasta_input = args.dir +"/"+ args.fasta
 blastout = args.input
 
 # get file name prefix
-file_prefix_arr = args.input.split(".")
-print(file_prefix_arr)
+file_prefix_arr = blastout.split(".")
 file_name_prefix = ".".join(file_prefix_arr[0:3])
-#file_name_suffix = "."+str(file_prefix_arr[-1])
-if file_prefix_arr[3] == "mmseqsv":
-	outFile = bdir+"/"+file_name_prefix+".mmseqsv.parsed"
-	e_cutoff = 1e-5
+#print(file_prefix_arr)
+#print(file_name_prefix)
+if file_prefix_arr[3] == "blastn":
+	file_name_suffix =""
+	outFile = bdir+"/"+file_name_prefix+".blastn.parsed"
+	e_cutoff = 1e-10
 	extra_rem = False
-	out_suffix = ".MMseqs_VIRUSDB"
-	#os.system('sed -i "$ d" {0}'.format(blastout))
-	vhunter_nuc = True
+	out_suffix = ".BNfiltered"
+	desc_type = "long"
 	BX=False
-elif file_prefix_arr[3] == "BLASTX_VIRUSDB":
-	outFile = bdir+"/"+file_name_prefix+".BLASTX_VIRUSDB.parsed"
+	MB=False
+elif file_prefix_arr[3] == "mmseqs":
+	file_name_suffix = ""
+	outFile = bdir+"/"+file_name_prefix+".mmseqs.parsed"
+	e_cutoff = 1e-10
+	extra_rem = True
+	out_suffix = ".MMseqs_filtered"
+	desc_type = "short"
+	BX=False
+	MB=True
+elif file_prefix_arr[3] == "blastx":
+	file_name_suffix =""
+	outFile = bdir+"/"+file_name_prefix+".blastx.parsed"
 	e_cutoff = 1e-3
 	extra_rem = True
-	out_suffix = ".BXVIRUSDB"
-	vhunter_nuc = False
+	out_suffix = ".BXfiltered"
+	desc_type = "short"
 	BX=True
+	MB=False
+# create ouput file
 
-#try:
-#    out = open(outFile, 'w')
-#except IOError:
-#	print("can not open file "+outFile)
+try:
+    out = open(outFile, 'w')
+except IOError:
+	print("can not open file "+outFile)
+	sys.exit(1)
+
+
+#print(phage_lowercase)
+
+keep_for_next_arr = []
+unassigned=[]
+
+total_records = 0
+
+
+print("parsing blast output files...\n\n")
+
+input_file = bdir+"/"+blastout
+custom_fields=["qseqid","sacc","pident","length","mismatch","gapopen","qstart","qend","sstart","send","evalue","bitscore","sseqid","qlen","slen"]
+
 
 phage_list = ["Uroviricota", "Loebvirae","Trapavirae","Sangervirae","Caudovirales","Caudoviricetes","unclassified bacterial viruses"]
 phage_lowercase=[x.lower() for x in phage_list]
 
 unassigned = [] # query should be kept for further analysis
-virusseq = []
-phageseq = []
+known = []
 
 total_records = 0
 
 print("parsing blast output files...\n\n")
 
-input_file = bdir+"/"+blastout
-#custom_fields=["qseqid","sacc","pident","length","mismatch","gapopen","qstart","qend","sstart","send","evalue","bitscore","sseqid","qlen","slen"]
 
 
 ###########################################################################
@@ -160,7 +186,7 @@ def getAssignment(formatted_lineage):
         assignment="Other"
     return assignment
 
-def get_final_df(testdf,vseq,pseq,unassi):
+def get_final_df(testdf,know):
     concatenated_df = pd.DataFrame()
     for unique_id,unique_df in testdf.groupby("qseqid", as_index=False):
         #print(unique_id)
@@ -168,40 +194,32 @@ def get_final_df(testdf,vseq,pseq,unassi):
         row_to_return = pd.Series([])
         num_assignments=len(unique_df['test'].iloc[0])
         if num_assignments == 1:
-            if unique_df['test'].iloc[0][0] == "Virus":
-                vseq+=[unique_id]
-                #print(unique_df['bitscore'].idxmax())
-                row_to_return = unique_df.loc[unique_df['bitscore'].idxmax()]
-                #print(vseq)
-            elif unique_df['test'].iloc[0][0] == "Phage":
-                pseq+=[unique_id]
-                row_to_return = unique_df.loc[unique_df['bitscore'].idxmax()]
-                #print(pseq)
-            else:
-                unassi+=[unique_id]
-                #print(unassi)
+            know+=[unique_id]
+            #print(unique_df['bitscore'].idxmax())
+            row_to_return = unique_df.loc[unique_df['bitscore'].idxmax()]
         elif num_assignments > 1:
             if "Virus" in unique_df['test'].iloc[0]:
-                if num_assignments ==2 and "unassigned" in unique_df['test'].iloc[0]:
-                    row_to_return = unique_df.loc[unique_df['bitscore'].idxmax()]
-                    vseq+=[unique_id]
+                if num_assignments == 2 and "unassigned" in unique_df['test'].iloc[0]:
+                    test_unassigned = unique_df['sallgi'].str.contains("Virus").all()
+                    if test_unassigned:
+                        row_to_return = unique_df.loc[unique_df['bitscore'].idxmax()]
+                    else:
+                        row_to_return = unique_df.loc[unique_df['bitscore'].idxmax()]
+                        row_to_return['test'] = "Ambiguous"
+                    know+=[unique_id]
                 else:
                     tmpdf = unique_df[unique_df["assignment"] != "Virus"]
                     if len(np.unique(tmpdf.test))==1:
+                        know+=[unique_id]
                         row_to_return = tmpdf.loc[tmpdf['bitscore'].idxmax()]
-                        if row_to_return["assignment"] == "Phage":
-                            pseq+=[unique_id]
-                        else:
-                            unassi+=[unique_id]
-                    #print(row_to_return)
-                    else:
-                        unassi+=[unique_id]
+                        row_to_return['test'] = "Ambiguous"
             else:
-                unassi+=[unique_id]
+                know+=[unique_id]
+                row_to_return = unique_df.loc[unique_df['bitscore'].idxmax()]
         if len(row_to_return) > 0:
             concatenated_df = pd.concat([concatenated_df,row_to_return.to_frame().T])
     print(concatenated_df.head())
-    return concatenated_df,vseq,pseq,unassi
+    return concatenated_df,know
    #check to see if length of test col is greater than 1
     #if len is one, find the row with teh highest bitscore 
     #if len is greater than one, check to see which taxa are listed
@@ -249,7 +267,7 @@ test_col = sub_blast_df1.groupby("qseqid")['assignment'].apply(lambda x: list(se
 #print(sub_blast_df1.head(30))
 testdf = pd.merge(sub_blast_df1, test_col, on="qseqid", how="left")
 print(testdf.head(25))
-final_blast_df,virusseq,phageseq,unassigned  = get_final_df(testdf, virusseq,phageseq,unassigned)
+final_blast_df,known  = get_final_df(testdf,known)
 
 #print(virusseq[0])
 ## format df output
@@ -290,39 +308,15 @@ unassigned2 = []
 seq_dict = read_FASTA_data(fasta_input)
 seq_headers = list(seq_dict.keys())
 
-hit_headers = set(virusseq + phageseq)
+hit_headers = set(known)
 unassigned2 = list(set(seq_headers) ^ hit_headers)
 
 with open(outFile, "a+") as tmpfile:
     tmpfile.write("# Summary: "+str(len(unassigned2))+" out of " +str(total_records) +" are unassigned.\n")
 
 
-outFile = bdir+"/"+file_name_prefix+out_suffix+"_hit.fa"
-try:
-	out2 = open(outFile, "w")
-except:
-	print("Can't create output file : "+outFile)
-print("VS list length " + str(len(virusseq)))
-for seq_name in virusseq:
-	out2.write(">"+seq_name+"\n")
-	seq=seq_dict[seq_name].seq
-	out2.write(str(seq)+"\n")
-out2.close()
-
-outFile = bdir+"/"+file_name_prefix+out_suffix+"_phage.fa"
-try:
-	out2 = open(outFile, "w")
-except:
-	print("Can't create output file : "+outFile)
-
-print("Phage list length "+str(len(phageseq)))
-for seq_name in phageseq:
-	out2.write(">"+seq_name+"\n")
-	seq=seq_dict[seq_name].seq
-	out2.write(str(seq)+"\n")
-out2.close()
-
-outFile = bdir+"/"+file_name_prefix+out_suffix+"_filtered.fa"
+#out_suffix = ".MMseqs_filtered"
+outFile = bdir+"/"+file_name_prefix+out_suffix+".fa"
 try:
 	out2 = open(outFile, "w")
 except:

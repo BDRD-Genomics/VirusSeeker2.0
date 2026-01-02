@@ -1,5 +1,6 @@
 ###################################################################
-# Author: BDRD <usn.detrick.nmrc.mbx.genomics-reach-back@health.mil>
+# Author: Kyle Long <kyle.a.long8.ctr@mail.mil>
+# Additional Contact: Regina Cer <regina.z.cer.civ@mail.mil>
 #
 # License:
 # VirusSeeker 2.0 is free software: you can redistribute it and/or modify it
