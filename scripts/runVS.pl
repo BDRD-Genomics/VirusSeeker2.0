@@ -710,7 +710,7 @@ sub map_to_host{
         print JSTCH "OUTFILE5=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.se.fastq.gz\n";
         print JSTCH "TIMEFILE=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.map_time.txt\n";
         print JSTCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print JSTCH "conda activate bbmap\n";
+        print JSTCH "conda activate vs\n";
 
         # Check if mapping finished successfully. If true, resubmitting will skip this step and keep results
         print JSTCH "if [ ! -e $status_log/j3_map_to_host_finished ]\n";
@@ -772,7 +772,7 @@ sub skip_host_removal{
                 print STCH "#SBATCH --depend=afterok:$last_jobid1\n";
         }
         print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print STCH "conda activate bbmap\n";  
+        print STCH "conda activate vs\n";  
         
         print STCH "IN=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.fastq.gz\n";
         print STCH "OUTFILE1=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe1.fastq.gz\n";
@@ -880,7 +880,7 @@ sub metaSPAdes_assembly{
                 print STCH "#SBATCH --depend=afterok:$last_jobid1 \n";
         }
         print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print STCH "conda activate spades\n";  
+        print STCH "conda activate vs\n";  
 
         print STCH "OUTDIR=".$assembly_dir_metaSPAdes."\n";
         print STCH "IN1=".$sample_dir."/${sample_name}.RemoveAdapter.bbduk.RefGenome.unmapped.pe1.fastq.gz\n\n";
@@ -993,7 +993,7 @@ sub unicycler_assembly{
              print STCH "#SBATCH --depend=afterok:$last_jobid1 \n";
         }
         print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print STCH "conda activate unicycler\n";  
+        print STCH "conda activate vs\n";  
 
         print STCH "OUTDIR=".$assembly_dir_unicycler."\n";
         print STCH "IN1=".$sample_dir."/${sample_name}.RemoveAdapter.bbduk.RefGenome.unmapped.pe1.fastq.gz\n\n";
@@ -1045,7 +1045,7 @@ sub SPAdes_assembly{
                 print STCH "#SBATCH --depend=afterok:$last_jobid1 \n";
         }
 	print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print STCH "conda activate spades\n";
+        print STCH "conda activate vs\n";
 
         print STCH "OUTDIR=".$assembly_dir_metaSPAdes."\n";
         print STCH "IN1=".$sample_dir."/${sample_name}.RemoveAdapter.bbduk.RefGenome.unmapped.pe1.fastq.gz\n\n";
@@ -1087,7 +1087,7 @@ sub map_to_assembly{
         chmod 0755, $job_script;
         print JSTCH "#!/bin/bash\n";
         print JSTCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print JSTCH "conda activate bbmap\n";  
+        print JSTCH "conda activate vs\n";  
         print JSTCH "IN1=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe1.fastq.gz\n";
         print JSTCH "IN2=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe2.fastq.gz\n";
         print JSTCH "INs=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.se.fastq.gz\n";
