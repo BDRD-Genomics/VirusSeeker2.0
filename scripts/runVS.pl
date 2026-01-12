@@ -130,7 +130,7 @@ $normal
 OUT
 
 die $usage unless scalar @ARGV == 9;
-my ($sample_dir, $ref_genome_choice, $num_CPU, $slurm_mem, $use_checkpoint, $step_number, $VStrack, $assembly_type, $assembly_mode) = @ARGV;
+my ($sample_dir, $ref_genome_choice, $num_CPU, $slurm_mem, $assembly_type, $assembly_mode, $use_checkpoint, $step_number, $VStrack) = @ARGV;
 die $usage unless (($step_number >= -1)&&($step_number <= 32));
 die $usage unless (($VStrack eq "D")||($VStrack eq "V"));
 if ($num_CPU == 0) {
@@ -152,6 +152,7 @@ if ($assembly_type eq "h") {
 }
 print "assembly type=$assembly_type\n";
 print "num_input_files=$num_input_files\n";
+my reference_genome=$ref_genome_choice
 
 #my $arg_log = "arguments".$sample_name."_out.txt";
 #open(STCH, ">$sample_dir/$arg_log") or die $!;
@@ -174,51 +175,6 @@ my $arg_log = "arguments_".$sample_name."_out.txt";
 open(STCH, ">$sample_dir/$arg_log") or die $!;
 print STCH "sample_dir = $sample_dir \n ref_genome = $ref_genome_choice \n num_CPU = $num_CPU \n assembly = $assembly_type\n mode = $VStrack\n num_input_files = $num_input_files\n assembly_mode = $assembly_mode\n\n";
 close STCH;
-
-
-#####################################################################################
-
-# reference genome taxonomy classification and database location.
-# Has to change $reference_genome_taxonomy and $reference_genome based on the data 
-# being analyzed!!!
-my $refrence_genome_taxonomy = "";
-my $reference_genome = "";
-
-
-if ($ref_genome_choice == 1) {
-	$refrence_genome_taxonomy = "Homo"; # use Bacteria, Homo, Phage, Fungi, Mus, other
-
-	# path to the reference genome 
-	$reference_genome = $ref_path."/human_CHM13/GCF_009914755.1_T2T-CHM13v2.0_genomic.fna.gz";
-}
-elsif ($ref_genome_choice == 2) {
-	$refrence_genome_taxonomy = "Mus"; # use Bacteria, Homo, Phage, Fungi, Mus, other
-	$reference_genome = $ref_path."/MouseGenome/MouseGenome_UCSC_mm10_2012_12_12.fa";
-}
-elsif ($ref_genome_choice == 3) {
-	$refrence_genome_taxonomy = "other"; # use bacteria, homo, phage, fungi, mus, other
-	$reference_genome = $ref_path."/CelegansCbriggsae/Celegans_WS220_Cbriggsae_WS234.fa";
-}
-elsif ($ref_genome_choice == 4) {
-	$refrence_genome_taxonomy = "other"; # use bacteria, homo, phage, fungi, mus, other
-	$reference_genome = $ref_path."/Cbrenneri/C_brenneri_genome.fa";
-}
-elsif ($ref_genome_choice == 5) {
-	$refrence_genome_taxonomy = "other"; # use Bacteria, Homo, Phage, Fungi, Mus, other
-	$reference_genome = $ref_path."MouseLemur_genome/Microcebus_murinus.micMur1.71.dna_sm.toplevel.fa";
-}
-elsif ($ref_genome_choice == 6) {
-	$refrence_genome_taxonomy = "other"; # use Bacteria, Homo, Phage, Fungi, Mus, other
-        #$reference_genome = $ref_path."bat_ref/AllBatGenomes_ref.fa";
-        #added by RZC on 2/21/2023
-        $reference_genome = $ref_path."bat_ref/Eonycteris_spelaea.fsa";
-}
-elsif ($ref_genome_choice == 7) {
-        $refrence_genome_taxonomy = "other"; # use Bacteria, Homo, Phage, Fungi, Mus, other
-        #$reference_genome = $ref_path."bat_ref/AllBatGenomes_ref.fa";
-        #added by RZC on 2/21/2023
-        $reference_genome = $ref_path."/tick+mosquitos/afi_geo_tick_mosq.fasta.gz";
-}
 
 
 ####################################################################################
@@ -248,8 +204,7 @@ my $file_number_of_RepeatMasker = 500;
 # If 1 sample is sequenced in 1 MiSeq run, 400 file would be max number of files
 # based on percentage of reads left for analysis at each step from MiSeq run 1 data. 
 # This number should be bigger to make sure each file does not have too many reads.
-#my $file_number_of_MMseqs_host = 30;
-#my $file_number_of_MMseqs_host = 400;
+
 
 my $contig_length_cutoff = 500; # length cutoff for a contig to be in output 
 
@@ -642,7 +597,7 @@ sub quality_control{
         print STCH "#!/bin/bash\n";
         print STCH "#SBATCH --partition=$partition\n";
         print STCH "#SBATCH --account=$account\n";
-	print STCH "#SBATCH --job-name=${sample_path}:stage2\n";
+		print STCH "#SBATCH --job-name=${sample_path}:stage2\n";
         print STCH "#SBATCH --cpus-per-task=$num_CPU\n";
         print STCH "#SBATCH --mem=${slurm_mem}\n";
         print STCH "#SBATCH --output=".$SLURM_files_dir."/".$current_job_file1.".out\n";
@@ -673,7 +628,7 @@ sub quality_control{
         print STCH "	fi\n";
         print STCH "	if [ $num_input_files -eq 3 ] || [ $num_input_files -eq 1 ]\n";
         print STCH "	then\n";
-	print STCH "		fastp --dedup --overrepresentation_analysis --low_complexity_filter --trim_poly_x --report_title '${sample_name}_fastp_report' -q 10 -e 10 --cut_front --cut_tail -w 16 -j ${sample_dir}/${sample_name}_fastp.json -h ${sample_dir}/${sample_name}_fastp.html --in1 \${IN3} -o \${OUTFILE2}\n";
+		print STCH "		fastp --dedup --overrepresentation_analysis --low_complexity_filter --trim_poly_x --report_title '${sample_name}_fastp_report' -q 10 -e 10 --cut_front --cut_tail -w 16 -j ${sample_dir}/${sample_name}_fastp.json -h ${sample_dir}/${sample_name}_fastp.html --in1 \${IN3} -o \${OUTFILE2}\n";
         print STCH "    fi\n";
 
         # Check if bbduk finished successfully. If true, resubmitting will skip this step and keep results
@@ -738,7 +693,7 @@ sub map_to_host{
         print STCH "#!/bin/bash\n";
         print STCH "#SBATCH --partition=$partition\n";
         print STCH "#SBATCH --account=$account\n";
-	print STCH "#SBATCH --job-name=${sample_path}:stage3a\n";
+		print STCH "#SBATCH --job-name=${sample_path}:stage3a\n";
         print STCH "#SBATCH --mem=${slurm_mem}\n"; 
         print STCH "#SBATCH --cpus-per-task=$num_CPU\n";
         print STCH "#SBATCH --error=".$SLURM_files_dir."/".$current_job_file1.".error\n";
@@ -765,7 +720,7 @@ sub skip_host_removal{
         print STCH "#!/bin/bash\n";
         print STCH "#SBATCH --partition=$partition\n";
         print STCH "#SBATCH --account=$account\n";
-	print STCH "#SBATCH --job-name=${sample_path}:stage3\n";
+		print STCH "#SBATCH --job-name=${sample_path}:stage3\n";
         print STCH "#SBATCH --output=".$SLURM_files_dir."/".$current_job_file1.".out\n";
 
         if (!$step_number or $step_number == -1) {
@@ -827,7 +782,7 @@ sub map_to_host_minimap{
         print JSTCH "           exit 1\n";
         print JSTCH "   else\n";
         print JSTCH "			samtools fastq -F 4 -c 6 \$OUTFILE1 > \$OUTFILE2\n";
-	print JSTCH "			samtools fastq -f 4 \$OUTFILE1 > \$OUTFILE3\n";
+		print JSTCH "			samtools fastq -f 4 \$OUTFILE1 > \$OUTFILE3\n";
         print JSTCH "           touch $status_log/j3c_map_to_host_finished\n";
         print JSTCH "   fi\n";
 
@@ -842,7 +797,7 @@ sub map_to_host_minimap{
         print STCH "#!/bin/bash\n";
         print STCH "#SBATCH --partition=$partition\n";
         print STCH "#SBATCH --account=$account\n";
-	print STCH "#SBATCH --job-name=${sample_path}:stage3c\n";
+		print STCH "#SBATCH --job-name=${sample_path}:stage3c\n";
         print STCH "#SBATCH --mem=${slurm_mem}\n"; 
         print STCH "#SBATCH --cpus-per-task=$num_CPU\n";
         print STCH "#SBATCH --error=".$SLURM_files_dir."/".$current_job_file1.".error\n";
@@ -869,7 +824,7 @@ sub metaSPAdes_assembly{
         print STCH "#!/bin/bash\n";
         print STCH "#SBATCH --partition=$partition\n";
         print STCH "#SBATCH --account=$account\n";
-	print STCH "#SBATCH --job-name=${sample_path}:stage4\n";
+		print STCH "#SBATCH --job-name=${sample_path}:stage4\n";
         print STCH "#SBATCH --cpus-per-task=$num_CPU\n";
         print STCH "#SBATCH --mem=${slurm_mem}\n";
         print STCH "#SBATCH --error=".$SLURM_files_dir."/".$current_job_file1.".%A_%a.error\n";
@@ -1044,7 +999,7 @@ sub SPAdes_assembly{
                 chomp $last_jobid1;
                 print STCH "#SBATCH --depend=afterok:$last_jobid1 \n";
         }
-	print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
+		print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
         print STCH "conda activate vs\n";
 
         print STCH "OUTDIR=".$assembly_dir_metaSPAdes."\n";
@@ -1137,7 +1092,7 @@ sub map_to_assembly{
         print STCH "#!/bin/bash\n";
         print STCH "#SBATCH --partition=$partition\n";
         print STCH "#SBATCH --account=$account\n";
-	print STCH "#SBATCH --job-name=${sample_path}:stage5\n";
+		print STCH "#SBATCH --job-name=${sample_path}:stage5\n";
         print STCH "#SBATCH --mem=${slurm_mem}\n"; # request total memory of 128G
         print STCH "#SBATCH --cpus-per-task=$num_CPU\n";
         print STCH "#SBATCH --error=".$SLURM_files_dir."/".$current_job_file1.".error\n";
@@ -1195,7 +1150,7 @@ sub map_to_assembly_minimap{
         print JSTCH "           exit 1\n";
         print JSTCH "   else\n";
         print JSTCH "		samtools fastq -F 4  \$OUTFILE1 > \$OUTFILE2\n";
-	print JSTCH "		samtools fastq -f 4 \$OUTFILE1 > \$OUTFILE3\n";
+		print JSTCH "		samtools fastq -f 4 \$OUTFILE1 > \$OUTFILE3\n";
         print JSTCH "           samtools sort \$OUTFILE1 -O bam -o \$OUTFILE11\n";
         print JSTCH "           samtools index \$OUTFILE11\n";
         print JSTCH "           samtools idxstats \$OUTFILE11 > minimap__assembly_LR_covstats.txt\n";  
@@ -1213,7 +1168,7 @@ sub map_to_assembly_minimap{
         print STCH "#!/bin/bash\n";
         print STCH "#SBATCH --partition=$partition\n";
         print STCH "#SBATCH --account=$account\n";
-	print STCH "#SBATCH --job-name=${sample_path}:stage5b\n";
+		print STCH "#SBATCH --job-name=${sample_path}:stage5b\n";
         print STCH "#SBATCH --mem=${slurm_mem}\n"; 
         print STCH "#SBATCH --cpus-per-task=$num_CPU\n";
         print STCH "#SBATCH --error=".$SLURM_files_dir."/".$current_job_file1.".error\n";
@@ -1372,7 +1327,7 @@ sub get_all_seqs{
 	
         if ($VStrack eq "D") {
         print STCH "INsingle1=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_pe.se.fastq.gz\n";
-	print STCH "INsingle2=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_se.fastq.gz\n";
+		print STCH "INsingle2=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_se.fastq.gz\n";
         print STCH "OUTsingle1=$seq_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_pe.se.fasta\n";
         print STCH "OUTsingle2=$seq_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_se.fasta\n";
         print STCH "INstitch=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_pe.pear.stitched.fastq.gz\n";
@@ -1384,9 +1339,9 @@ sub get_all_seqs{
         }
 
         else {
-	print STCH "INstitch=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe.pear.stitched.fastq.gz\n";
-        print STCH "OUTstitch=$seq_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe.stitched.fasta\n";
-        print STCH "INlong=$sample_dir"."/".$sample_name.".RemoveAdapter.fastp.RefGenome.unmapped.LR.fastq.gz\n";
+		print STCH "INstitch=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe.pear.stitched.fastq.gz\n";
+		print STCH "OUTstitch=$seq_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe.stitched.fasta\n";
+		print STCH "INlong=$sample_dir"."/".$sample_name.".RemoveAdapter.fastp.RefGenome.unmapped.LR.fastq.gz\n";
         }
 
         print STCH "OUTFILE=$sample_dir/${sample_name}.allSeqs.fasta\n\n";
@@ -1417,28 +1372,27 @@ sub get_all_seqs{
 	print STCH "	touch $status_log/j7_get_all_seqs_finished \n";
 	print STCH "fi\n";
 	close STCH;
-        
-
+    
 	$last_jobid1 = `sbatch $job_files_dir/$current_job_file1 | awk '{ print \$NF }'`;
 }
 
 ##########STAGE 8: This step will cluster sequences using mmseqs to reduce redundancy##########
 sub run_mmseqs{
-        $current_job_file1 = "j8_".$sample_name."_cluster.sh";
-        open(STCH, ">$job_files_dir/$current_job_file1") or die $!;
-        print STCH "#!/bin/bash\n";
-        print STCH "#SBATCH --partition=$partition\n";
-        print STCH "#SBATCH --account=$account\n";
+	$current_job_file1 = "j8_".$sample_name."_cluster.sh";
+	open(STCH, ">$job_files_dir/$current_job_file1") or die $!;
+	print STCH "#!/bin/bash\n";
+	print STCH "#SBATCH --partition=$partition\n";
+	print STCH "#SBATCH --account=$account\n";
 	print STCH "#SBATCH --job-name=${sample_path}:stage8\n";
 	print STCH "#SBATCH --cpus-per-task=$num_CPU\n";
-        print STCH "#SBATCH --mem=${slurm_mem}\n";
-        print STCH "#SBATCH --error=".$SLURM_files_dir."/".$current_job_file1.".error\n";
-        print STCH "#SBATCH --output=".$SLURM_files_dir."/".$current_job_file1.".out\n";
-        if (!$step_number or $step_number == -1) {
-                print STCH "#SBATCH --depend=afterok:$last_jobid1\n";
-        }
-        print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print STCH "conda activate vs\n";  
+	print STCH "#SBATCH --mem=${slurm_mem}\n";
+	print STCH "#SBATCH --error=".$SLURM_files_dir."/".$current_job_file1.".error\n";
+	print STCH "#SBATCH --output=".$SLURM_files_dir."/".$current_job_file1.".out\n";
+	if (!$step_number or $step_number == -1) {
+		print STCH "#SBATCH --depend=afterok:$last_jobid1\n";
+	}
+	print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
+	print STCH "conda activate vs\n";  
         
 	print STCH "if [ ! -e ${status_log}/j8_cluster_finished ]\n";
 	print STCH "then\n";
@@ -1477,8 +1431,8 @@ sub pre_RepeatMasker{
 	if (!$step_number or $step_number == -1) {
 		print STCH "#SBATCH --depend=afterok:$last_jobid1\n";
 	}
-        print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print STCH "conda activate vs\n";  
+	print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
+	print STCH "conda activate vs\n";  
 	print STCH "IN=".${sample_name}.".allSeqs.mmseqs_rep_seq.fasta\n";
 	print STCH "SAMPLE_DIR=".$sample_dir."\n";
 	print STCH "RM_DIR=".$repeatmasker_dir."\n\n";
@@ -1525,8 +1479,8 @@ sub RepeatMasker{
 	print JSTCH "RMIN=$repeatmasker_dir/${sample_name}.allSeqs.mmseqs_rep_seq.fasta_file\${SLURM_ARRAY_TASK_ID}.fasta\n";#
 	print JSTCH "RMOTHER=$repeatmasker_dir/${sample_name}.allSeqs.mmseqs_rep_seq.fasta_file\${SLURM_ARRAY_TASK_ID}.fasta.out\n";
 	print JSTCH "RM_dir=".$repeatmasker_dir."\n\n";
-        print JSTCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print JSTCH "conda activate vs\n";  
+	print JSTCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
+	print JSTCH "conda activate vs\n";  
 	
 	print JSTCH 'if [ -e $RMIN ]',"\n"; # input file exist
 	print JSTCH "then\n";
@@ -1675,7 +1629,6 @@ sub submit_job_array_MMseqs_VIRUSDB{
         print STCH '    if [ ! -e $MMseqsOUT ]',"\n";
         print STCH "    then\n";
         print STCH "		date > \${TIMEFILE}\n";
-        #print STCH "            $mmseqs_touchdb $db_MMSEQS_NT_VIRUS --threads \$SLURM_CPUS_PER_TASK\n";
         print STCH "            $mmseqs_easysearch \${QUERY} $db_MMSEQS_NT_VIRUS \${MMseqsOUT} $mmseqs_tmpdir --max-accept 25 --threads \$SLURM_CPUS_PER_TASK --start-sens 1 --sens-steps 3 -s 7 -e 1.0E-4 --split-memory-limit \${SLURM_MEM_PER_NODE} --search-type 3 --format-output \"query,target,pident,alnlen,mismatch,gapopen,qstart,qend,tstart,tend,evalue,bits,theader,qlen,tlen\"","\n";
         print STCH '            CHECK=$?',"\n";
         print STCH '      	if [ ${CHECK} -ne 0 ]',"\n";
@@ -1701,7 +1654,6 @@ sub submit_job_array_MMseqs_VIRUSDB{
         print STCH "                            echo \"Fatal Error : mmseqs easy-search did not finish correctly.\"  \n";
         print STCH "                            exit 1\n";
         print STCH "                    else\n";
-#        print STCH "                            echo MMSEQS_EASYSEARCH_COMPLETED >> \${MMseqsOUT}","\n";
         print STCH "                    	date >> \${TIMEFILE}\n";
     	print STCH "				touch $status_log/j13_finished_mmseqs_easysearch \n";   
         print STCH "                    fi\n";
@@ -1765,9 +1717,6 @@ sub parse_MMseqs_VIRUSDB {
 	#if the parsed file does not exist, run parser and check the completeness of the parsed file
 	print STCH '	if [ ! -f $PARSED ]',"\n";
 	print STCH "	then\n";
-#	print STCH "		".$run_script_path."MMseqs_VIRUSDB_parser.pl.test.sqlite ".$sample_dir."/".$sample_name.$MMseqs_VIRUSDB_DIR_SUFFIX." \${MMseqsOUT}\n";
-#	python parse_blast_Virus_noBP.py -i 40.MMseqs_VIRUSDB_Filtered.fa_file1.BLASTX_VIRUSDB.out -d /mnt/genomics/users/qthomas/test/VS_parsing/Virus_blastx/ -f 40.MMseqs_VIRUSDB_Filtered.fa_file1.fasta
-#	print STCH "		python ".$bash_bin_path."/BLAST_VIRUSDB_parser.py ".$sample_dir."/".$sample_name.$MMseqs_VIRUSDB_DIR_SUFFIX." \${MMseqsOUT}\n";
 	print STCH "            python ".$bash_bin_path."/parse_blast_Virus_noBP.py -d \${MMseqs_VIRUSDB_DIR}/ -i \${MMseqsOUT} -f \${MMseqsIN}\n";
 	print STCH "		".$run_script_path."check_MMseqs_parsed_file.pl \${PARSED}\n";
 	print STCH '		CHECK=$?',"\n";
@@ -1785,8 +1734,6 @@ sub parse_MMseqs_VIRUSDB {
 	#check if parsed file is completed. If not correctly completed exit.
 	print STCH '		if [ ${CHECK} -ne 0 ]',"\n"; # value is 0 if completed correctly.
 	print STCH "		then\n"; # rerun the parser
-#	print STCH "			".$run_script_path."MMseqs_VIRUSDB_parser.pl.test.sqlite ".$sample_dir."/".$sample_name.$MMseqs_VIRUSDB_DIR_SUFFIX." \${MMseqsOUT}\n";
-#	print STCH '			python '.$bash_bin_path."/BLAST_VIRUSDB_parser.py ".$sample_dir."/".$sample_name.$MMseqs_VIRUSDB_DIR_SUFFIX." \${MMseqsOUT}\n";
 	print STCH "			python ".$bash_bin_path."/parse_blast_Virus_noBP.py -d \${MMseqs_VIRUSDB_DIR}/ -i \${MMseqsOUT} -f \${MMseqsIN}\n";
 	print STCH "			".$run_script_path."check_MMseqs_parsed_file.pl  \${PARSED}\n";
 	print STCH '			CHECK=$?',"\n";
@@ -1876,7 +1823,7 @@ sub split_for_BLASTX_VIRUSDB {
 	print STCH '	CHECK1=$?',"\n";
 	print STCH "	".$run_script_path."check_split_BLASTX_VIRUSDB.pl \${SAMPLE_DIR}\n";
 	print STCH '	CHECK2=$?',"\n";
-#	print STCH '	echo ${CHECK1}, ${CHECK2}', "\n";
+
 	print STCH '	if [ ${CHECK1} -ne 0 -o ${CHECK2} -ne 0  ]',"\n"; # value is 0 if completed correctly.
 	print STCH "	then\n";
 	print STCH "		echo \"Fatal Error trying to process split for BLASTX VIRUSDB.\"  \n";
@@ -1897,8 +1844,8 @@ sub submit_job_array_BLASTX_VIRUSDB{
 	chmod 0755, $job_script;
 
 	print STCH "#!/bin/bash\n";
-        print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print STCH "conda activate vs\n";        
+	print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
+	print STCH "conda activate vs\n";        
 	print STCH "VIRUS_DIR=".$sample_dir."/".$sample_name.$BLASTX_VIRUSDB_DIR_SUFFIX."\n";
 	print STCH "BLASTX_VIRUSDB_OUT=",'${VIRUS_DIR}',"/",$sample_name.".MMseqs_VIRUSDB_Filtered.fa_file".'${SLURM_ARRAY_TASK_ID}',".BLASTX_VIRUSDB.out\n";#full path
 	print STCH "QUERY=",'${VIRUS_DIR}',"/".$sample_name.".MMseqs_VIRUSDB_Filtered.fa_file".'${SLURM_ARRAY_TASK_ID}',".fasta\n\n";
@@ -1990,8 +1937,6 @@ sub parse_BLASTX_VIRUSDB {
 	print STCH '		CHECK=$?',"\n";
 	print STCH '		if [ ${CHECK} -ne 0 ]',"\n"; # parsing did not complete correctly  
 	print STCH "		then\n";
-	#print STCH "			".$run_script_path."BLASTX_VIRUSDB_parser.pl.sqlite \${VIRUS_DIR} \${BLASTX_VIRUSDB_OUT}\n";
-#	print STCH '            	python '.$bash_bin_path."/BLAST_VIRUSDB_parser.py "."\${VIRUS_DIR} \${BLASTX_VIRUSDB_OUT}\n";
 	print STCH "			python ".$bash_bin_path."/parse_blast_Virus_noBP.py -d "."\${VIRUS_DIR} -i \${BLASTX_VIRUSDB_OUT} -f \${BLASTX_VIRUSDB_IN}\n";
 	print STCH "			".$run_script_path."check_Blast_parsed_file.pl \${PARSED}\n";
 	print STCH '			CHECK=$?',"\n"; # if finished correctly the value should be 0.
@@ -2020,8 +1965,8 @@ sub split_for_MMseqs_NT{
 	if (!$step_number or $step_number == -1) {
 		print STCH "#SBATCH --depend=afterok:$last_jobid1\n";
 	}
-        print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
-        print STCH "conda activate vs\n";  
+	print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
+	print STCH "conda activate vs\n";  
 	print STCH "SAMPLE_DIR=".$sample_dir."\n";
 	print STCH "MMseqs_DIR=".$MMseqs_dir_NT."\n";
 	print STCH "VIRUSDB_HIT_all=".$sample_name.".VIRUSDB_HIT.fa\n";
@@ -2132,12 +2077,9 @@ sub submit_job_array_MMseqs_NT {
 	print STCH "		fi\n";
 	#if mmseqs output file exists, check the completeness of output
 	print STCH "	else\n";
-#	print STCH '		tail -10 ${MMseqsOUT}|grep MMseqs_s5_COMPLETED',"\n";
-#	print STCH '		CHECK=$?',"\n";
 	print STCH "		if [ ! -f $status_log/j19_MMseqs_NT_run_script_finished ]","\n";
 	print STCH "		then\n";
 	print STCH "			date > \${TIMEFILE}\n";
-	#print STCH "			$blastn -num_threads \$SLURM_CPUS_PER_TASK -max_target_seqs 25 -sorthits 2 -evalue 1e-8 -query \${QUERY} -out \${BlastOUT} -db $db_MMSEQS_NT","\n";
 	print STCH "			$mmseqs_easysearch \${QUERY} $db_MMSEQS_NT \${MMseqsOUT} $mmseqs_tmpdir --max-accept 10 --threads \$SLURM_CPUS_PER_TASK --start-sens 5 --sens-steps 3 -s 7 -e 1.0E-4 --split-memory-limit \${SLURM_MEM_PER_NODE} --search-type 3 --format-output \"query,target,pident,alnlen,mismatch,gapopen,qstart,qend,tstart,tend,evalue,bits,theader,qlen,tlen\"","\n";
 	print STCH "			OUT=\$?\n"; 
 	print STCH '			if [ ${OUT} -ne 0 ]',"\n"; # did not finish successfully
@@ -2208,8 +2150,6 @@ sub parse_MMseqs_NT{
 	#if the parsed file does not exist, run parser and check the completeness of the parsed file
 	print STCH '	if [ ! -f $PARSED ]',"\n"; # no parsed file
 	print STCH "	then\n";
-	#print STCH "		".$run_script_path."MegaBLAST_NT_parser.pl.sqlite  \${MMseqs_DIR} \${MMseqsOUT}\n";
-	#print STCH '		python '.$bash_bin_path."/BLAST_NT_NR_parser.py "."\${MMseqs_DIR} \${MMseqsOUT}\n";	
 	print STCH '		python '.$bash_bin_path."/parse_blast_NTNR_noBP.py -d \${MMseqs_DIR}/ -f \${QUERY} -i \${MMseqsOUT}\n";
 	print STCH "		".$run_script_path."check_MMseqs_parsed_file.pl \${PARSED}\n";
 	print STCH '		CHECK=$?',"\n";
@@ -2227,8 +2167,6 @@ sub parse_MMseqs_NT{
 	#check if parsed file is completed. If not completed, rerun parser.
 	print STCH '		if [ ${CHECK} -ne 0 ]',"\n";   
 	print STCH "		then\n";
-	#print STCH "			".$run_script_path."MegaBLAST_NT_parser.pl.sqlite  \${BLAST_DIR} \${BlastOUT}\n";
-	#print STCH '			python '.$bash_bin_path."/BLAST_NT_NR_parser.py "."\${MMseqs_DIR} \${MMseqsOUT}\n";
 	print STCH '			python '.$bash_bin_path."/parse_blast_NTNR_noBP.py -d \${MMseqs_DIR}/ -f \${QUERY} -i \${MMseqsOUT}\n";
 	print STCH "			".$run_script_path."check_MMseqs_parsed_file.pl  \${PARSED}\n";
 	print STCH '			CHECK=$?',"\n";
@@ -2396,7 +2334,7 @@ sub parse_BLASTX{
 	if (!$step_number or $step_number == -1) {
 		print STCH "#SBATCH --depend=afterok:$last_jobid1\n";
 	}
-	#print STCH "module load bio-perl\n";
+
 	print STCH "source ${conda_prefix}/etc/profile.d/conda.sh\n";
 	print STCH "conda activate vs\n";  
 	print STCH "BX_DIR=".$BLASTX_NR_dir."\n";
@@ -2640,9 +2578,7 @@ sub generate_phage_report{
 	print STCH "#SBATCH --account=$account\n";
 	print STCH "#SBATCH --job-name=${sample_path}:stage27\n";
 	print STCH "#SBATCH --output=".$SLURM_files_dir."/".$current_job_file1.".out\n";
-	#print STCH "module load perl-modules\n";
-	#print STCH "module load bio-perl\n";
-	#print STCH "set -x\n";
+
 	if (!$step_number or $step_number == -1) {
 		print STCH "#SBATCH --depend=afterok:$last_jobid1\n";
 	}
