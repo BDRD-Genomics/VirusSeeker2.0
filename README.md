@@ -44,6 +44,7 @@ mv [path to reads]/sample_R2.fastq.gz [output path]/[run name]/[run_name]_SE2.fa
 mv [path to adapter]/adapter.txt [output path]/[run name]/[run_name]_adapter.txt
 ```
 #### Run VirusSeeker:
+- sample_dir, ref_genome_choice, num_CPU, slurm_mem, use_checkpoint, step_number, VStrack, assembly_type, assembly_mode
 ```
 perl runVS.pl [directory containing sequenced reads for 1 sample] ["/path/to/host/reference.fasta"] [slurm CPUS] 0 0 D [read type] [sequencing type]		
 ```
