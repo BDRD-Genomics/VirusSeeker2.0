@@ -1,10 +1,10 @@
 #!/bin/bash
 shopt -s extglob
-basedir=/export/virusseeker
-execdir="$basedir/VirusSeeker/scripts/VirusSeeker_Discovery/"
+basedir=/path/to/VS/dir
+execdir="$basedir/scripts/"
 eval "$(command conda 'shell.bash' 'hook' 2> /dev/null)"
-source /export/miniforge3/etc/profile.d/conda.sh
-conda activate vs
+#source /path/to/miniforge3/etc/profile.d/conda.sh
+#conda activate vs
 
 timestamp() {
        	date +%Y-%m-%d_%H%M%S
@@ -22,7 +22,7 @@ while getopts "h?d:m:o:r:t:va:k:" opt; do
 			;;
 	       	m)  	slurm_mem=$OPTARG ;; # memory per process in GB
 	       	o)  	outdir=$basedir/VS_output/$OPTARG ;; # e.g. batch1
-	       	r)  	readlist=$basedir/readlist/$OPTARG ;; # file which contains path-to-reads
+	       	r)  	readlist=$OPTARG ;; # file which contains path-to-reads
 	       	t)  	slurm_cpus_per_task=$OPTARG ;; # threads per stage e.g. 64
 	       	a)		assembly=$OPTARG ;; #assembly type (s for illumina PE, l for ONT long reads, h for hybrid assembly)
 	       	v)  	mode="V" ;; # run in Virome mode, defaults to Discovery mode
