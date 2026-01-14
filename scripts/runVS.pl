@@ -61,6 +61,7 @@ $yellow		Usage: perl $0 <sample_folder> <ref genome> <#CPU> <Memory(GB)> <use ch
 <sample_folder> = full path of the folder holding files for the sample
 <ref genome> = 1. Human genome
  
+
 <#CPU> = number of CPU to use
 <Memory> = GB of memory to use
 <use checkpointing> = 1. yes, 0. no
@@ -152,7 +153,9 @@ if ($assembly_type eq "h") {
 }
 print "assembly type=$assembly_type\n";
 print "num_input_files=$num_input_files\n";
-my reference_genome=$ref_genome_choice
+my $reference_genome = $ref_genome_choice;
+
+
 
 #my $arg_log = "arguments".$sample_name."_out.txt";
 #open(STCH, ">$sample_dir/$arg_log") or die $!;
@@ -345,18 +348,20 @@ if ($step_number == 0 or $step_number == -1) {
         # 2
         &quality_control();
         # 3
-        if ($step_number == 0) {
-        	if ($assembly_type eq "s" or $assembly_type eq "h"){
+        if ($reference_genome eq "X"){
+		&skip_host_removal();
+	}
+	else{
+            if ($assembly_type eq "s" or $assembly_type eq "h"){
                 &map_to_host();
             }
             if ($assembly_type eq "l" or $assembly_type eq "h"){
                 &map_to_host_minimap();
             }
-        }elsif ($step_number == -1) {
-                &skip_host_removal();
+        #}elsif ($step_number == -1) {
+        #        &skip_host_removal();
+        #}
         }
-        
-        
         if ($VStrack eq "V") {
                 # 4
                 &skip_assembly();
