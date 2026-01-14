@@ -51,6 +51,21 @@ perl runVS.pl [directory containing sequenced reads for 1 sample] ["/path/to/hos
 - Read type may be "s", "l" or "h" for short, long or hybrid
 - Sequencing type may be "m", or "i" for metagenomic or isolate
 - See runVS.pl script for more argument options
+- To submit a large number of samples to the VirusSeeker2.0 pipeline you can utilize the queue.sh script
+
+```
+bash queue.sh -r <file containing paths to fastq files to be submit to the pipeline> -o <output directory>
+
+-r 		text file containing path to fastq input files (one path per line) [required]
+-o		name of output directory [required]
+-d		path to fasta file to be used for host removal
+-k 		"i" or "m" for isolate or metagenomic
+-a		"s", "l" or "h" for short, long or hybrid assemblies
+-m		slurm memory
+-t		slurm number of threads
+```
+
+
 
 <br>
 
