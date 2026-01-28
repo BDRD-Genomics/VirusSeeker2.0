@@ -19,6 +19,15 @@ authors:
 - family-names: "Philipson"
   given-names: "Casandra W."
   orcid: ""
+- family-names: "Zhao"
+  given-names: "Guoyan"
+  orcid: "https://orcid.org/0000-0001-5615-6774"
+- family-names: "Cer"
+  given-names: "Regina Z."
+  orcid: "https://orcid.org/0000-0002-2395-980X"
+- family-names: "Bishop-Lilly"
+  given-names: "Kimberly A."
+  orcid: "https://orcid.org/0000-0002-5744-8493"
 title: "VirusSeeker2.0"
 version: 2.0.0
 doi: 10.5281/zenodo.1234
