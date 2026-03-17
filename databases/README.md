@@ -9,9 +9,12 @@ scripts=/path/to/VirusSeeker_2.0/scripts
 ## Download NR and NT Commands
 ```
 update_blastdb.pl --decompress nr && mv nr $vsdir/nr_$(date +%d%b%y) 
-ln -sf $vsdir/nr_$(date +%d%b%y) $vsdir/nr  
+ln -sf $vsdir/nr_$(date +%d%b%y) $vsdir/nr
+#Download using provided perl script
 update_blastdb.pl --decompress core_nt && mv core_nt $vsdir/core_nt_$(date +%d%b%y)  
-ln -sf $vsdir/core_nt_$(date +%d%b%y) $vsdir/core_nt 
+ln -sf $vsdir/core_nt_$(date +%d%b%y) $vsdir/core_nt
+#Alternative from mmseqs
+mmseqs databases NT  $vsdir/nt tmp
 ```
 
 ## Download human reference genome
@@ -40,12 +43,13 @@ blastdbcmd -taxidlist $vsdir/virus.taxid.txt -dbtype nucl -db $vsdir/nt/nt > vir
 mmseqs easy-linclust $vsdir/VirusDBNT/virus_nt.fasta $vsdir/VirusDBNT/virus_nt.clustr98_98 /tmp --split-memory-limit 500G --min-seq-id 0.98 -c 0.98 --threads 255
 ```
 
-## Creating BLAST Database for VirusDBNT
+## Creating MMseqs2 Database for VirusDBNT and NT
 ```
 cd $vsdir/VirusDBNT
-makeblastdb -in virus_nt.clustr98_98_rep_seq.fasta -blastdb_version 5 -dbtype nucl -parse_seqids -out virus_nt
-dustmasker -in virus_nt -infmt blastdb -parse_seqids -outfmt maskinfo_asn1_bin -out virus_nt.asnb
-makeblastdb -in virus_nt -input_type blastdb -blastdb_version 5 -dbtype nucl -parse_seqids -mask_data virus_nt.asnb -out virus_nt -title "Nucleotide database built from viral taxonomy ids extracted from NCBI nt clustered with mmseqs2 and masked with dustmasker"
+#VirusDBNT
+mmseqs createdb virus_nt.clustr98_98_rep_seq.fasta virus_nt
+#coreNT
+mmseqs createdb core_nt.fasta core_nt
 ```
 
 ## Creating Diamond Databases for VirusDBNR and NR 
