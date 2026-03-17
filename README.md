@@ -35,6 +35,9 @@
 - Generic paths are currently in the file, most of which point to a "databases" directory and subdirectories, but you are free to organize this as you see fit
 - If using the queue.sh script, edit line 3 to accurately point to the correct VS base directory
 
+## Important Note
+- This is a computationally expensive pipeline and we highly recommend running on an HPC. We do not recommend running it locally, however, if you would like to run locally we suggest using smaller databases than core_nt and nr. These databases can use over 500GB of RAM when running mmseqs and diamond steps and will often result in OOM errors. If using smaller databases you may get less robust results but should still have relevant outputs.
+
 ## Running VirusSeeker 2.0 
 #### Create output dir:
 `mkdir [output path]/[run name]`
