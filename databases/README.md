@@ -15,6 +15,9 @@ update_blastdb.pl --decompress core_nt && mv core_nt $vsdir/core_nt_$(date +%d%b
 ln -sf $vsdir/core_nt_$(date +%d%b%y) $vsdir/core_nt
 #Alternative from mmseqs
 mmseqs databases NT  $vsdir/nt tmp
+#Alternative using wget
+wget -b "ftp://ftp.ncbi.nlm.nih.gov/blast/db/core_nt.{01..99}.tar.gz"
+wget -b "ftp://ftp.ncbi.nlm.nih.gov/blast/db/nr.{001..200}.tar.gz"
 ```
 
 ## Download human reference genome
