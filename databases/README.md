@@ -37,7 +37,7 @@ taxonkit list --ids 10239 -I "" >  $vsdir/virus.taxid.txt
 ## Clustering VirusDBNR and VirusDBNT Database
 ```
 mkdir $vsdir/VirusDBNR_$(date +%d%b%y) && ln -sf $vsdir/VirusDBNR_$(date +%d%b%y) $vsdir/VirusDBNR && cd $vsdir/VirusDBNR
-blastdbcmd -taxidlist $vsdir/virus.taxid.txt -dbtype prot -db $vsdir/nr/nr > virus_nr.fasta 
+blastdbcmd -taxidlist $vsdir/virus.taxid.txt -dbtype prot -db $vsdir/nr/nr > virus_nr.fasta
 mmseqs easy-linclust $vsdir/VirusDBNR/virus_nr.fasta $vsdir/VirusDBNR/virus_nr.clustr98_98 /tmp --min-seq-id 0.98 -c 0.98 --threads 255
 ```
 ```
@@ -52,6 +52,7 @@ cd $vsdir/VirusDBNT
 #VirusDBNT
 mmseqs createdb virus_nt.clustr98_98_rep_seq.fasta virus_nt
 #coreNT
+blastdbcmd -dbtype nucl -db $vsdir/core_nt/core_nt -entry all > core_nt.fasta
 mmseqs createdb core_nt.fasta core_nt
 ```
 
