@@ -33,6 +33,7 @@
 - Paths to various directories used in VirusSeeker 2.0 are saved in the VS.config file
 - The VS.config file should be located in the same directory as the scripts used to run VirusSeeker
 - Generic paths are currently in the file, most of which point to a "databases" directory and subdirectories, but you are free to organize this as you see fit
+- If using the queue.sh script, edit line 3 to accurately point to the correct VS base directory
 
 ## Running VirusSeeker 2.0 
 #### Create output dir:
