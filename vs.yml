@@ -74,6 +74,7 @@ dependencies:
   - seqtk
   - pear
   - perl-switch
+  - biopython
   - minimap2
   - fastp
   - unicycler
