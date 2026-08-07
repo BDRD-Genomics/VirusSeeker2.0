@@ -21,16 +21,32 @@ import argparse
 import subprocess as sp
 import sqlite3
 from ete3 import NCBITaxa
-import configparser
+#import configparser
 from Bio import SeqIO
 
 # Get paths from config file
-config = configparser.ConfigParser()
-config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VS.cfg')
-config.read(config_path)
-paths = config['paths']
-vhunter = paths['vhunter']
-ncbidb = paths['ncbi_taxadb']
+#config = configparser.ConfigParser()
+#config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VS.cfg')
+#config.read(config_path)
+#paths = config['paths']
+#vhunter = paths['vhunter']
+#ncbidb = paths['ncbi_taxadb']
+
+config_variables = {}
+config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VS.config')
+with open(config_path, "r") as var_file:
+	for line in var_file:
+		line = line.strip()
+		if not line or line.startswith('#'):
+			continue
+		key, value = line.split("=", 1)
+		config_variables[key.strip()] = value.strip()
+vhunter = config_variables['vhunter']
+ncbidb = config_variables['ncbi_taxdb']
+print(vhunter)
+print(ncbidb)
+
+
 ncbi = NCBITaxa(dbfile = ncbidb)
 
 # open a connection to database
