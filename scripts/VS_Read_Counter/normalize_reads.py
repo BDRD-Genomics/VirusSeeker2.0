@@ -4,7 +4,20 @@ import os
 import pandas as pd
 import numpy as np
 from subprocess import Popen, PIPE
-ncbi = NCBITaxa(dbfile = "/export/database/taxonomy/taxa.sqlite")
+
+config_variables = {}
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VS.config'), "r") as var_file:
+	for line in var_file:
+		line = line.strip()
+		if not line or line.startswith('#'):
+			continue
+		key, value = line.split("=", 1)
+		config_variables[key.strip()] = value.strip()
+vhunter = config_variables['vhunter']
+ncbidb = config_variables['ncbi_taxdb']
+
+
+ncbi = NCBITaxa(dbfile = ncbidb)
 
 argv=sys.argv[1:]
 opts,args = getopt.getopt(argv,"hi:",["in="])
@@ -18,8 +31,8 @@ for opt,arg in opts:
 file_name = ARC_file.rsplit(".",1)[0]
 print(file_name)
 
-# This file comes from NCBI's viruses.tsv (ftp:/genomes/GENOME_REPORTS) a few additional family sizes have been added due to incomplete naming and other issues. Up to date Oct2023
-virus_genomes_file = "/export/virusseeker/scripts/qkt_scripts/viralFamily_genomeSize.txt"
+# This file comes from ICTV's Virus Properties file. 
+virus_genomes_file = config_variables['virus_family_genomes']
 vf_dict = pd.read_csv(virus_genomes_file, sep="\t", header=0, names=["fam","size"]).set_index('fam')['size'].to_dict()
 #print(vf_dict)
 
