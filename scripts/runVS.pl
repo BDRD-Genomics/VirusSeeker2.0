@@ -1922,7 +1922,7 @@ sub parse_BLASTX_VIRUSDB {
 	print STCH "PARSED=",'${VIRUS_DIR}',"/".$sample_name.".MMseqs_VIRUSDB_Filtered.fa_file".'${SLURM_ARRAY_TASK_ID}',".BLASTX_VIRUSDB.parsed\n\n";
 	print STCH "BLASTX_VIRUSDB_Filtered_fa=",'${VIRUS_DIR}',"/".$sample_name.".MMseqs_VIRUSDB_Filtered.fa_file".'${SLURM_ARRAY_TASK_ID}',".BXVIRUSDB_filtered.fa\n\n";       
 	
-	print STCH 'if [ -f ${VIRUS_DIR}/${BLASTX_VIRUSDB_OUT} ]',"\n"; # input file exist
+	print STCH 'if [ -s ${VIRUS_DIR}/${BLASTX_VIRUSDB_OUT} ]',"\n"; # input file exist
 	print STCH "then\n";
 	#if the parsed file does not exist, run parser and check the completeness of the parsed file
 	print STCH '	if [ ! -f $PARSED ]',"\n";
@@ -1952,6 +1952,11 @@ sub parse_BLASTX_VIRUSDB {
 	print STCH "			fi\n";
 	print STCH "		fi\n";
 	print STCH "	fi\n";
+	print STCH "else\n";
+	print STCH "	cp \${VIRUS_DIR}/\$BLASTX_VIRUSDB_IN \${BLASTX_VIRUSDB_Filtered_fa}\n";
+	print STCH "	touch \${VIRUS_DIR}/".$sample_name.".MMseqs_VIRUSDB_Filtered.fa_file".'${SLURM_ARRAY_TASK_ID}',".BXVIRUSDB_hit.fa \n";
+	print STCH "	touch \${VIRUS_DIR}/".$sample_name.".MMseqs_VIRUSDB_Filtered.fa_file".'${SLURM_ARRAY_TASK_ID}',".BXVIRUSDB_phage.fa \n";
+	print STCH "	touch $status_log/j18_finished_MMseqs_NT_split \n";
 	print STCH "fi";
 	close STCH;
 
