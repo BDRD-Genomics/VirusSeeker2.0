@@ -8,7 +8,7 @@
 ## Files
 - The VirusSeeker_2.0_scripts directory contains the scripts required to run the pipeline
 - This README and the DATABASE_README should be followed prior to use of VirusSeeker 2.0
-- The vs2_env.txt file is used to created the conda environment
+- The vs.yml file is used to created the conda environment
 
 ## SLURM
 - VirusSeeker 2.0 is designed to be used with SLURM Workload Manager
