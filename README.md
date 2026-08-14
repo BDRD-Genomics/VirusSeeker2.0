@@ -26,7 +26,7 @@ VirusSeeker 2.0 can also be run using Docker without requiring a SLURM installat
 The VirusSeeker 2.0 container image is distributed through GitHub Container Registry:
 
 ```bash
-docker pull ghcr.io/bdrd-genomics/virusseeker2:<tag>
+docker pull ghcr.io/bdrd-genomics/edge-docker.genomics.local/virusseeker2:<tag>
 ```
 
 Replace `<tag>` with the desired published image version.
