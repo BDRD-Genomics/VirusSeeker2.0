@@ -9,11 +9,6 @@
 - The VirusSeeker_2.0_scripts directory contains the scripts required to run the pipeline
 - This README and the DATABASE_README should be followed prior to use of VirusSeeker 2.0
 - The vs.yml file is used to created the conda environment
-
-## SLURM
-- VirusSeeker 2.0 is designed to be used with SLURM Workload Manager
-- SLURM installation instructions can be found here: https://slurm.schedmd.com/quickstart_admin.html
-
 ## Docker
 VirusSeeker 2.0 can also be run using Docker without requiring a SLURM installation on the host system. The Docker runtime contains the required software dependencies and uses a local `sbatch` compatibility layer so the existing VirusSeeker workflow can execute outside of a SLURM cluster.
 
@@ -71,6 +66,9 @@ After installation, launch VirusSeeker with:
 
 The generated `run.env` contains the runtime paths and settings used by the Docker installation.
 
+## SLURM
+- VirusSeeker 2.0 is designed to be used with SLURM Workload Manager
+- SLURM installation instructions can be found here: https://slurm.schedmd.com/quickstart_admin.html
 
 ## Installation
 ### Setting up the environment:
