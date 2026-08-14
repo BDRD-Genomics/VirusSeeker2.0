@@ -43,13 +43,23 @@ cd VirusSeeker2.0
   --db-profile test \
   --root /path/to/virusseeker \
   --image ghcr.io/bdrd-genomics/virusseeker2:<tag> \
-  --threads 26 \
-  --memory 54G \
+  --threads 16 \
+  --memory 32G \
   --yes
 ```
 
 The `test` database profile creates a compact functional test installation and uses public SARS-CoV-2 data to exercise the VirusSeeker workflow without requiring the full production databases.
-
+Switch the 'test' database profile to `full` to get the production database. This will require > 1TB of storage.
+```
+./install.sh \
+  --mode docker \
+  --db-profile full \
+  --root /path/to/virusseeker \
+  --image ghcr.io/bdrd-genomics/virusseeker2:<tag> \
+  --threads 16 \
+  --memory 32G \
+  --yes
+```
 ### Running the Docker installation
 After installation, launch VirusSeeker with:
 
