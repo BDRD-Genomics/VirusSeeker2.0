@@ -821,7 +821,6 @@ build_virus_nt() {
 
     ln -sfn "releases/VirusDBNT_${DATE_TAG}" "$DB_ROOT/VirusDBNT"
 
-    # runVS.pl expects ref/ref_viruses_rep_genomes beneath the configured ref path.
     cp -fL       "$release_host/virus_nt.clustr98_98_rep_seq.fasta"       "$DB_ROOT/ref/ref_viruses_rep_genomes"
 
     vs_exec "
