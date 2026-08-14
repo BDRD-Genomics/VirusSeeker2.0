@@ -48,7 +48,8 @@ cd VirusSeeker2.0
   --yes
 ```
 
-The `test` database profile creates a compact functional test installation and uses public SARS-CoV-2 data to exercise the VirusSeeker workflow without requiring the full production databases. \n
+The `test` database profile creates a compact functional test installation and uses public SARS-CoV-2 data to exercise the VirusSeeker workflow without requiring the full production databases.
+
 Switch the 'test' database profile to `full` to get the production database. This will require > 1TB of storage.
 ```
 ./install.sh \
