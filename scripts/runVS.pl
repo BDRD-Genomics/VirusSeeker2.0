@@ -155,13 +155,6 @@ print "assembly type=$assembly_type\n";
 print "num_input_files=$num_input_files\n";
 my $reference_genome = $ref_genome_choice;
 
-
-
-#my $arg_log = "arguments".$sample_name."_out.txt";
-#open(STCH, ">$sample_dir/$arg_log") or die $!;
-#print STCH "sample_dir = $sample_dir \n ref_genome = $ref_genome_choice \n num_CPU = $num_CPU \n assembly = $assembly_type";  
-#close STCH;
-
 #####################################################################################
 # get name of the sample and path to the data
 if ($sample_dir =~/(.+)\/$/) {
@@ -180,39 +173,12 @@ print STCH "sample_dir = $sample_dir \n ref_genome = $ref_genome_choice \n num_C
 close STCH;
 
 
-####################################################################################
-# Here are the parameters that can be adjusted according to computer cluster 
-# configuration.
-# Use this as max number of reads per file as input for assembler. 
-####################################################################################
-# To run jobs faster, split large fasta files to small ones. Split to specific number 
-# of files instead of specific sequences in each small file, because the number of job 
-# array cannot be determined if spliting to specific number of sequences in each file. 
-# Job number is required by qsub ${SLURM_ARRAY_TASK_ID} the minimum size of each file is 4kb
-
-# Repeatmasker
-# It takes ~ 0.4 sec to process each seq. 1200 seq takes ~ 8 min.
-# minimum number of sequences per file when spliting into smaller files
 my $num_seq_per_file_Repeatmasker = 36000;
 
-# the number of job files for RepeatMasker. The most optimal number would be an 
-# estimated number that makes the number of sequences in each file close to 2400. 
-#my $file_number_of_RepeatMasker = 1000; 
 my $file_number_of_RepeatMasker = 500; 
-
-# MMseqs2 search
-# 20,000 reads use ~15 min in MMseqs2 against reference genome. If too many reads in 
-# one file the memory usage is too big. Job may be killed before it finishes. 
-#my $num_seq_per_file_MMseqs_host = 40000;
-# If 1 sample is sequenced in 1 MiSeq run, 400 file would be max number of files
-# based on percentage of reads left for analysis at each step from MiSeq run 1 data. 
-# This number should be bigger to make sure each file does not have too many reads.
-
 
 my $contig_length_cutoff = 500; # length cutoff for a contig to be in output 
 
-# MMseqs virus only database. 10,000 sequence takes ~ 10 min
-# Specify the number of sequences to be in each file 
 my $num_seq_per_file_MMseqs_VIRUSDB = 5000000;
 # Specify the total number of files to be splited into
 my $file_number_of_MMseqs_VIRUSDB = 50; 
@@ -293,28 +259,23 @@ my $MMseqs_NT_dir = $sample_dir."/".$sample_name."_MMseqs_NT";
 my $BLASTX_NR_dir =$sample_dir."/".$sample_name."_BLASTX_NR";
 
 ####################################################################################
-# Everything else below should be automated.
 my $HOME = $ENV{HOME};
 
-# store job files here
 my $job_files_dir = $sample_dir."/job_script";
 if (! -d $job_files_dir) {
 	`mkdir -p $job_files_dir`;
 }
 
-#create a folder to store SGE output and error files
 my $sge_files_dir = $sample_dir."/SGE_DIR";
 #if (! -d $sge_files_dir) {
 	#`mkdir -p $sge_files_dir`;
 #}
 
-#create a folder to store SLURM output and error files
 my $SLURM_files_dir = $sample_dir."/SLURM_DIR";
 if (! -d $SLURM_files_dir) {
 	`mkdir -p $SLURM_files_dir`;
 }
 
-#create a folder to store status files
 my $status_log = $sample_dir."/status_log";
 if (! -d $status_log) {
 	`mkdir -p $status_log`;
@@ -676,7 +637,8 @@ sub map_to_host{
         print JSTCH "if [ ! -e $status_log/j3_map_to_host_finished ]\n";
         print JSTCH "then\n";
         print JSTCH "   date > \${TIMEFILE}\n";
-        print JSTCH "   bbmap.sh in=\${IN} ref=$reference_genome tossbrokenreads covstats=$sample_dir"."/".$sample_name.".bbmap_host_covstats.txt statsfile=$sample_dir"."/".$sample_name.".bbmap_host_statsfile.txt -Xmx${slurm_mem} fast=t ow 32bit=t pigz=t outm=\${OUTFILE1} outu=\${OUTFILE2} \n";
+        print JSTCH "   mkdir -p $sample_dir/bbmap_host_index\n";
+        print JSTCH "   bbmap.sh path=$sample_dir/bbmap_host_index in=\${IN} ref=$reference_genome tossbrokenreads covstats=$sample_dir"."/".$sample_name.".bbmap_host_covstats.txt statsfile=$sample_dir"."/".$sample_name.".bbmap_host_statsfile.txt -Xmx${slurm_mem} fast=t ow 32bit=t pigz=t outm=\${OUTFILE1} outu=\${OUTFILE2} \n";
         print JSTCH "   OUT=\$?\n";
         print JSTCH '   if [ ${OUT} -ne 0 ]',"\n"; # did not finish successfully
         print JSTCH "   then\n";
@@ -847,7 +809,7 @@ sub metaSPAdes_assembly{
         print STCH "IN2=".$sample_dir."/${sample_name}.RemoveAdapter.bbduk.RefGenome.unmapped.pe2.fastq.gz\n\n";
         print STCH "INs=".$sample_dir."/${sample_name}.RemoveAdapter.bbduk.RefGenome.unmapped.se.fastq.gz\n\n";
 
-        print STCH "if [ -e \${IN} ] \n";
+        print STCH "if [ -s \${IN1} ] && [ -s \${IN2} ] \n";
         print STCH "then\n";
         print STCH "    if [ ! -e $status_log/j4_finished_metaSPAdes_assembly\${SLURM_ARRAY_TASK_ID} ]\n";
         print STCH "    then\n";
@@ -960,7 +922,7 @@ sub unicycler_assembly{
         print STCH "IN2=".$sample_dir."/${sample_name}.RemoveAdapter.bbduk.RefGenome.unmapped.pe2.fastq.gz\n\n";
         print STCH "INL=$sample_dir"."/".$sample_name.".RemoveAdapter.fastp.RefGenome.unmapped.LR.fastq\n";
 
-        print STCH "if [ -e \${IN} ] \n";
+        print STCH "if [ -s \${IN1} ] && [ -s \${IN2} ] && [ -s \${INL} ] \n";
         print STCH "then\n";
         print STCH "    if [ ! -e $status_log/j4c_finished_unicycler_assembly\${SLURM_ARRAY_TASK_ID} ]\n";
         print STCH "    then\n";
@@ -1012,7 +974,7 @@ sub SPAdes_assembly{
         print STCH "IN2=".$sample_dir."/${sample_name}.RemoveAdapter.bbduk.RefGenome.unmapped.pe2.fastq.gz\n\n";
         print STCH "INs=".$sample_dir."/${sample_name}.RemoveAdapter.bbduk.RefGenome.unmapped.se.fastq.gz\n\n";
 
-        print STCH "if [ -e \${IN} ] \n";
+        print STCH "if [ -s \${IN1} ] && [ -s \${IN2} ] \n";
         print STCH "then\n";
         print STCH "    if [ ! -e $status_log/j4d_finished_SPAdes_assembly\${SLURM_ARRAY_TASK_ID} ]\n";
         print STCH "    then\n";
@@ -1277,8 +1239,16 @@ sub stitching{
 	print STCH "if [ ! -e $status_log/j6_stitching_finished ]\n";
 	print STCH "then\n";
 	print STCH "	date > \${TIMEFILE}\n\n";
+	print STCH "    if python -c 'import gzip,sys; sys.exit(0 if gzip.open(sys.argv[1],\"rb\").read(1) else 1)' \${IN1}; then\n";
 	print STCH "	$pear -j \${SLURM_CPUS_PER_TASK} -v 10 -f \${IN1} -r \${IN2} -o \${OUTFILE} > $stitching_report_file\n";
-	print STCH "	OUT=\$?\n"; 
+	print STCH "        OUT=\$?\n";
+	print STCH "    else\n";
+   print STCH "        echo \"No paired reads remain after assembly; skipping PEAR cleanly.\"\n";
+	print STCH "        : > \${OUTFILE}.assembled.fastq\n";
+	print STCH "        : > \${OUTFILE}.unassembled.forward.fastq\n";
+	print STCH "        : > \${OUTFILE}.unassembled.reverse.fastq\n";
+	print STCH "        OUT=0\n";
+	print STCH "    fi\n";
 	print STCH '	if [ ${OUT} -ne 0 ]',"\n"; # did not finish successfully
 	print STCH "	then\n";
 	print STCH "		echo \"Fatal Error trying to run pear.\"  \n";
@@ -1335,7 +1305,7 @@ sub get_all_seqs{
 		print STCH "INsingle2=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_se.fastq.gz\n";
         print STCH "OUTsingle1=$seq_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_pe.se.fasta\n";
         print STCH "OUTsingle2=$seq_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_se.fasta\n";
-        print STCH "INstitch=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_pe.pear.stitched.fastq.gz\n";
+        print STCH "INstitch=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_pe.stitched.fastq.gz\n";
         print STCH "OUTstitch=$seq_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.assembly.unmapped_pe.stitched.fasta\n";
         
         print STCH "INlong=$sample_dir"."/".$sample_name.".RemoveAdapter.fastp.RefGenome.unmapped.assembly.unmapped.LR.fastq\n";
@@ -1344,7 +1314,7 @@ sub get_all_seqs{
         }
 
         else {
-		print STCH "INstitch=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe.pear.stitched.fastq.gz\n";
+		print STCH "INstitch=$sample_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe.stitched.fastq.gz\n";
 		print STCH "OUTstitch=$seq_dir"."/".$sample_name.".RemoveAdapter.bbduk.RefGenome.unmapped.pe.stitched.fasta\n";
 		print STCH "INlong=$sample_dir"."/".$sample_name.".RemoveAdapter.fastp.RefGenome.unmapped.LR.fastq.gz\n";
         }
@@ -2410,8 +2380,9 @@ sub map_to_viral_ref{
 	# Check if mapping finished successfully. If true, resubmitting will skip this step and keep results
 	print JSTCH "if [ ! -e $status_log/j24_map_to_viral_ref_finished ]\n";
 	print JSTCH "then\n";
-	print JSTCH "   date > \${TIMEFILE}\n";
-	print JSTCH "   bbsplit.sh in=\${IN} ref=$viral_reference_genome covstats=$sample_dir"."/".$sample_name.".bbsplit_viral_covstats.txt tossbrokenreads fast=t nodisk=t ow pigz=t -Xmx${slurm_mem}\n";
+   print JSTCH "   date > $status_log/j24_map_to_viral_ref.time.txt\n";
+	print JSTCH "   mkdir -p $sample_dir/bbmap_viral_ref_index\n";
+	print JSTCH "   bbsplit.sh path=$sample_dir/bbmap_viral_ref_index in=\${IN} ref=$viral_reference_genome covstats=$sample_dir"."/".$sample_name.".bbsplit_viral_covstats.txt tossbrokenreads fast=t nodisk=t ow pigz=t -Xmx${slurm_mem}\n";
 	print JSTCH "   OUT=\$?\n";
 	print JSTCH '   if [ ${OUT} -ne 0 ]',"\n"; # did not finish successfully
 	print JSTCH "   then\n";
@@ -2462,9 +2433,10 @@ sub map_to_viral_ref_b{
 	# Check if mapping finished successfully. If true, resubmitting will skip this step and keep results
 	print JSTCH "if [ ! -e $status_log/j24b_map_to_viral_ref_finished ]\n";
 	print JSTCH "then\n";
-	print JSTCH "   date > \${TIMEFILE}\n";
+   print JSTCH "   date > $status_log/j24b_map_to_viral_ref.time.txt\n";
 	print JSTCH "   seqkit fq2fa \${IN2} > \${IN} \n"; 
-	print JSTCH "   bbsplit.sh in=\${IN} ref=$viral_reference_genome covstats=$sample_dir"."/".$sample_name.".bbsplit_viral_covstats.txt tossbrokenreads fast=t nodisk=t ow pigz=t -Xmx${slurm_mem} maxlen=50000\n";
+	print JSTCH "   mkdir -p $sample_dir/bbmap_viral_ref_index\n";
+	print JSTCH "   bbsplit.sh path=$sample_dir/bbmap_viral_ref_index in=\${IN} ref=$viral_reference_genome covstats=$sample_dir"."/".$sample_name.".bbsplit_viral_covstats.txt tossbrokenreads fast=t nodisk=t ow pigz=t -Xmx${slurm_mem} maxlen=50000\n";
 	print JSTCH "   OUT=\$?\n";
 	print JSTCH '   if [ ${OUT} -ne 0 ]',"\n"; # did not finish successfully
 	print JSTCH "   then\n";

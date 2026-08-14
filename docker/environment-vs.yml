@@ -1,0 +1,61 @@
+name: vs
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  # Current Unicycler builds require Python 3.10.
+  - python=3.10
+  - perl>=5.32
+  - perl-config-simple
+  - perl-xml-simple
+  - perl-app-cpanminus
+
+  # Commands referenced by runVS.pl and its helper scripts.
+  - bbmap
+  - blast
+  - bwa
+  - bedtools
+  - samtools
+  - spades
+  - unicycler=0.5.1
+  - diamond=2.1.18
+  - mmseqs2
+  - minimap2
+  - seqkit
+  - seqtk
+  - pear
+  - pigz
+  - pbzip2
+  - fastp
+  - fastqc
+  - cutadapt
+
+  # Database setup and taxonomy/report parsing.
+  - taxonkit
+  - entrez-direct
+  - ncbi-vdb
+  - ete3
+  - sqlite
+  - tidyp
+
+  # Runtime libraries and Python reporting stack.
+  - openjdk
+  - wget
+  - curl
+  - bzip2
+  - xz
+  - zlib
+  - zstd
+  - numpy
+  - scipy
+  - pandas
+  - pyarrow
+  - packaging
+  - setuptools
+  - wheel
+  - pip
+  - biopython
+  - bowtie2
+  - perl-bioperl
+  - sra-tools

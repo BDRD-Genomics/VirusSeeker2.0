@@ -1,10 +1,7 @@
 #!/bin/bash
-shopt -s extglob
-basedir=/path/to/VS/dir
+basedir="${VIRUSSEEKER_HOME:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 execdir="$basedir/scripts/"
 eval "$(command conda 'shell.bash' 'hook' 2> /dev/null)"
-#source /path/to/miniforge3/etc/profile.d/conda.sh
-#conda activate vs
 
 timestamp() {
        	date +%Y-%m-%d_%H%M%S
@@ -81,12 +78,12 @@ do
 		# 
 		then
 			touch ${outdir}/${sname}/${sname}_adapter.txt
-			ln -sf ${outdir}/${sname}/${sname}_*R1* \
+			cp -fL ${outdir}/${sname}/${sname}_*R1* \
 					${outdir}/${sname}/${sname}_SE1.fastq.gz 
-			ln -sf ${outdir}/${sname}/${sname}_*R2* \
+			cp -fL ${outdir}/${sname}/${sname}_*R2* \
 						${outdir}/${sname}/${sname}_SE2.fastq.gz 
 			echo -e "Queueing ${sname} at $(timestamp)\n"
-			perl ${execdir}/runVS.pl ${outdir}/${sname} ${host_db} ${slurm_cpus_per_task} ${slurm_mem} ${assembly} ${assembly_mode} 0  0 ${mode}; ;; #removes human 
+			perl ${execdir}/runVS.pl ${outdir}/${sname} ${host_db} ${slurm_cpus_per_task} ${slurm_mem} ${assembly} ${assembly_mode} 0  0 ${mode} #removes human 
 		fi
 
 	elif [[ "${assembly}" == "l" ]]
@@ -103,10 +100,10 @@ do
 			#only one read so doesn't matter which sample you're on
 			echo -e "wrong path"
 			touch ${outdir}/${sname}/${sname}_adapter.txt
-			ln -sf ${outdir}/${sname}/${sname} \
+			cp -fL ${outdir}/${sname}/${sname}.fastq.gz \
 						${outdir}/${sname}/${sname}_LR.fastq.gz 
 			echo -e "Queueing ${sname} at $(timestamp)\n"
-			perl ${execdir}/runVS.pl ${outdir}/${sname} ${host_db} ${slurm_cpus_per_task} ${slurm_mem} ${assembly} ${assembly_mode} 0  0 ${mode}; ;; #removes human 
+			perl ${execdir}/runVS.pl ${outdir}/${sname} ${host_db} ${slurm_cpus_per_task} ${slurm_mem} ${assembly} ${assembly_mode} 0  0 ${mode} #removes human 
 		fi
 	elif [[ "$assembly" == "h" ]]
 	then
@@ -127,14 +124,14 @@ do
 		then
 			#echo -e "All there!"
 			touch ${outdir}/${sname}/${sname}_adapter.txt
-			ln -sf ${outdir}/${sname}/${sname}_*R1* \
+			cp -fL ${outdir}/${sname}/${sname}_*R1* \
 					${outdir}/${sname}/${sname}_SE1.fastq.gz 
-			ln -sf ${outdir}/${sname}/${sname}_*R2* \
+			cp -fL ${outdir}/${sname}/${sname}_*R2* \
 					${outdir}/${sname}/${sname}_SE2.fastq.gz 
-			ln -sf ${outdir}/${sname}/${sname}.fastq.gz \
+			cp -fL ${outdir}/${sname}/${sname}.fastq.gz \
 					${outdir}/${sname}/${sname}_LR.fastq.gz 
 			echo -e "Queueing ${sname} at $(timestamp)\n"
-			perl ${execdir}/runVS.pl ${outdir}/${sname} ${host_db} ${slurm_cpus_per_task} ${slurm_mem} ${assembly} ${assembly_mode} 0  0 ${mode}; ;; #removes human 
+			perl ${execdir}/runVS.pl ${outdir}/${sname} ${host_db} ${slurm_cpus_per_task} ${slurm_mem} ${assembly} ${assembly_mode} 0  0 ${mode} #removes human 
 		fi
 	fi
 done

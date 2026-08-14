@@ -1,5 +1,18 @@
 #python parse blast using pandas
 
+# 1) read blast output table
+# 2) remove duplicate rows
+# 3) groupby query ID and target ID
+# 4) combine multiple query/target results into a single line
+    # This means calculate new alignment length, new coverage coordinates and count the number of times this query aligned to this target
+# 5) Add lineage information
+# 6) Sort df by query and then by bitscore
+
+###########################################################################
+# Data Prep  #
+###########################################################################
+
+
 import sys
 import os
 import pandas as pd
@@ -10,6 +23,14 @@ import sqlite3
 from ete3 import NCBITaxa
 #import configparser
 from Bio import SeqIO
+
+# Get paths from config file
+#config = configparser.ConfigParser()
+#config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VS.cfg')
+#config.read(config_path)
+#paths = config['paths']
+#vhunter = paths['vhunter']
+#ncbidb = paths['ncbi_taxadb']
 
 config_variables = {}
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VS.config'), "r") as var_file:
@@ -24,6 +45,7 @@ ncbidb = config_variables['ncbi_taxdb']
 
 ncbi = NCBITaxa(dbfile = ncbidb)
 
+# open a connection to database
 print("Connecting to vhunter db...")
 try:
 	connector = sqlite3.connect(vhunter)
@@ -38,6 +60,7 @@ parser = argparse.ArgumentParser(
                 description='',
                 epilog='Parse the blast table from sequence comparative algorithm (MMSeqs,blastn,blastx)',
                 usage="parse_blast_noBP.py -i <input dir> -f <input file> -o <output dir>")
+# add options
 parser.add_argument("-i", "--input") # blast/mmseqs input table
 parser.add_argument("-f", "--fasta") # blast/mmseqs input table
 parser.add_argument("-d", "--dir") # blast/mmseqs input table
@@ -74,6 +97,11 @@ elif file_prefix_arr[3] == "BLASTX_VIRUSDB":
 	vhunter_nuc = False
 	BX=True
 
+#try:
+#    out = open(outFile, 'w')
+#except IOError:
+#	print("can not open file "+outFile)
+
 phage_list = ["Uroviricota", "Loebvirae","Trapavirae","Sangervirae","Caudovirales","Caudoviricetes","unclassified bacterial viruses"]
 phage_lowercase=[x.lower() for x in phage_list]
 
@@ -87,6 +115,11 @@ print("parsing blast output files...\n\n")
 
 input_file = bdir+"/"+blastout
 #custom_fields=["qseqid","sacc","pident","length","mismatch","gapopen","qstart","qend","sstart","send","evalue","bitscore","sseqid","qlen","slen"]
+
+
+###########################################################################
+# Functions  #
+###########################################################################
 
 def read_FASTA_data(fastaFile):
 	fa_dict = SeqIO.index(fastaFile, "fasta")
@@ -181,43 +214,22 @@ def get_final_df(testdf,vseq,pseq,unassi):
             concatenated_df = pd.concat([concatenated_df,row_to_return.to_frame().T])
     print(concatenated_df.head())
     return concatenated_df,vseq,pseq,unassi
+   #check to see if length of test col is greater than 1
+    #if len is one, find the row with teh highest bitscore 
+    #if len is greater than one, check to see which taxa are listed
+        #if virus and *OTHER* then remove rows where assignment=virus
+        #if *OTHER* and *OTHER* then
 
+
+###################################################################################
+
+###########################################################################
+# Step 1:  #
+###########################################################################
 
 custom_fields=["qseqid","sseqid","pident","length","mismatch","gapopen","qstart","qend","sstart","send","evalue","bitscore","sallgi","qlen","slen"]
 
-if (not os.path.exists(input_file)) or os.path.getsize(input_file) == 0:
-	print("No BLAST/MMseqs hits found; treating all input sequences as unassigned.")
-
-	seq_dict = read_FASTA_data(fasta_input)
-	seq_headers = list(seq_dict.keys())
-	total_records = len(seq_headers)
-
-	# Parsed output still needs to exist for downstream bookkeeping.
-	with open(outFile, "w") as tmpfile:
-		tmpfile.write("# Summary: "+str(total_records)+" out of "+str(total_records)+" are unassigned.\n")
-
-	# No viral hits.
-	hit_file = bdir+"/"+file_name_prefix+out_suffix+"_hit.fa"
-	open(hit_file, "w").close()
-
-	# No phage hits.
-	phage_file = bdir+"/"+file_name_prefix+out_suffix+"_phage.fa"
-	open(phage_file, "w").close()
-
-	# Every input sequence continues as filtered/unassigned.
-	filtered_file = bdir+"/"+file_name_prefix+out_suffix+"_filtered.fa"
-	with open(filtered_file, "w") as out:
-		for seq_name in seq_headers:
-			out.write(">"+seq_name+"\n")
-			out.write(str(seq_dict[seq_name].seq)+"\n")
-
-	print("VS list length 0")
-	print("Phage list length 0")
-	print("Unassigned list length "+str(total_records))
-	print("Writing output to: "+outFile)
-	print("Writing filtered sequences to: "+filtered_file)
-	sys.exit(0)
-
+# Read blast-like table
 blast_df = pd.read_csv(input_file, delimiter="\t", low_memory=True, engine="pyarrow", names=custom_fields)
 #print(str(blast_df.shape[0]))
 blast_df = blast_df.drop_duplicates()
@@ -242,6 +254,7 @@ print("Adding assignment...")
 sub_blast_df1["assignment"] = sub_blast_df1.apply(lambda row: getAssignment(row["lineage"]), axis=1)
 #print(sub_blast_df1.head(25))
 
+#Next step!!!!!!!!!!!!!
 #summarize assignments per query
 print("Summarizing assignments")
 test_col = sub_blast_df1.groupby("qseqid")['assignment'].apply(lambda x: list(set(x))).reset_index(name="test")
@@ -268,12 +281,23 @@ print(formatted_blast_df.head())
        'qend', 'sstart', 'send', 'evalue', 'bitscore', 'sallgi', 'qlen',
        'slen', 'aln_count', 'lineage', 'assignment'
 '''
+#print("Filtering lineage...")
+#sub_blast_df1["lin_count"] = sub_blast_df1.groupby(["qseqid", "lineage"])["lineage"].transform('size')
+#print(len(sub_blast_df1))
+#idx2 = sub_blast_df1.groupby(["qseqid", "lineage"])['bitscore'].idxmax()
+#sub_blast_df2 = sub_blast_df1.loc[idx2]
+#print(len(sub_blast_df2))
+#print(sub_blast_df2.columns)
 
+
+# print(sub_blast_df1.head(n=15))
+#testdf.to_csv("test_full.parsed", index=False, sep='\t', header=False)
 print("Writing output to: "+outFile)
 formatted_blast_df.to_csv(outFile, index=False, sep='\t', header=False)
 
 
 print("Reading fasta file")
+#file = bdir+"/"+file_name_prefix+".fasta"
 unassigned2 = []
 seq_dict = read_FASTA_data(fasta_input)
 seq_headers = list(seq_dict.keys())
@@ -322,3 +346,6 @@ for seq_name in unassigned2:
 	seq=seq_dict[seq_name].seq
 	out2.write(str(seq)+"\n")
 out2.close()
+
+
+

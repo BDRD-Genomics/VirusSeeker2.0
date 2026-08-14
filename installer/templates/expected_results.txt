@@ -1,0 +1,27 @@
+VirusSeeker 2.0 public-data functional test expectations
+
+This profile is a software/reproducibility test, not a sensitivity benchmark.
+No synthetic biological reads or reference sequences are generated.
+
+Public inputs:
+  - NCBI SRA SRR22470068: paired-end Illumina SARS-CoV-2 patient sequencing
+  - SARS-CoV-2 reference genome NC_045512.2
+  - SARS-CoV-2 RefSeq proteins YP_009724389.1 ... YP_009725295.1
+  - Human mitochondrial genome NC_012920.1 as the compact host-reference subset
+  - Human Alu-Sx consensus U14574.1 as the compact RepeatMasker library
+
+Expected:
+  - paired-end QC completes
+  - assembly stages complete or cleanly skip when inputs are exhausted
+  - RepeatMasker executes using the real U14574.1 Alu-Sx sequence
+  - viral-only MMseqs executes against NC_045512.2
+  - viral-only DIAMOND database is readable and passes a real SARS genome BLASTX preflight
+  - pipeline BLASTX may legitimately have zero input after earlier nucleotide assignment; empty results must be handled cleanly
+  - full tiny-NT/MMseqs stage executes
+  - full tiny-NR/DIAMOND stage executes
+  - taxonomy helper databases resolve SARS-CoV-2 taxid 2697049
+  - final viral lineage resolves through Coronaviridae to SARS-CoV-2
+
+Input:
+  input/SRR22470068_R1.fastq.gz
+  input/SRR22470068_R2.fastq.gz

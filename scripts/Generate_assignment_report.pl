@@ -544,6 +544,13 @@ sub collect_information {
 		my $lineage = shift @info;
 		my $desc = join ("\t", @info);
 
+
+            # parse_blast_Virus_noBP.py emits "Virus" while the historical
+            # assignment-report code expects "Viruses".
+            if ($category eq "Virus") {
+                    $category = "Viruses";
+            }
+
 #		my ($read_ID, $length, $category, $lineage, $hit_name, $hit_length, $hit_desc, $hsp_len, $e_value) = split("\t", $_);
 #		print "readID = \\$read_ID\\, length = \\$length\\, category = \\$category\\, lineage = \\$lineage\\, desc = \\$desc\\\n";
 		switch ($category ) {
