@@ -1,0 +1,14 @@
+# Optional packages present in the upstream vs.yml but not required by the
+# current runVS.pl command paths. Install these into the vs environment only if
+# a local helper script requires them.
+name: vs-upstream-extras
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - mafft
+  - muscle
+  - paml
+  - poa
+  - viennarna

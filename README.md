@@ -9,6 +9,62 @@
 - The VirusSeeker_2.0_scripts directory contains the scripts required to run the pipeline
 - This README and the DATABASE_README should be followed prior to use of VirusSeeker 2.0
 - The vs.yml file is used to created the conda environment
+## Docker
+VirusSeeker 2.0 can also be run using Docker without requiring a SLURM installation on the host system. The Docker runtime contains the required software dependencies and uses a local `sbatch` compatibility layer so the existing VirusSeeker workflow can execute outside of a SLURM cluster.
+
+### Requirements
+- Docker
+- Sufficient disk space for the selected database profile
+- Internet access during installation when databases and public test data are downloaded
+
+### Pulling the Docker image
+The VirusSeeker 2.0 container image is distributed through GitHub Container Registry:
+
+```bash
+docker pull ghcr.io/bdrd-genomics/edge-docker.genomics.local/virusseeker2:<tag>
+```
+
+Replace `<tag>` with the desired published image version.
+
+### Docker installation
+Clone the repository and run the included installer:
+
+```bash
+git clone https://github.com/BDRD-Genomics/VirusSeeker2.0.git
+cd VirusSeeker2.0
+
+./install.sh \
+  --mode docker \
+  --db-profile test \
+  --root /path/to/virusseeker \
+  --image ghcr.io/bdrd-genomics/virusseeker2:<tag> \
+  --threads 16 \
+  --memory 32G \
+  --yes
+```
+
+The `test` database profile creates a compact functional test installation and uses public SARS-CoV-2 data to exercise the VirusSeeker workflow without requiring the full production databases.
+
+Switch the `test` database profile to `vs` to get the production database. This will require > 1TB of storage.
+```
+./install.sh \
+  --mode docker \
+  --db-profile vs \
+  --root /path/to/virusseeker \
+  --image ghcr.io/bdrd-genomics/virusseeker2:<tag> \
+  --threads 16 \
+  --memory 32G \
+  --yes
+```
+### Running the Docker installation
+After installation, launch VirusSeeker with:
+
+```bash
+/path/to/virusseeker/scripts/run_virusseeker.sh \
+  /path/to/virusseeker/config/run.env
+```
+
+The generated `run.env` contains the runtime paths and settings used by the Docker installation.
 
 ## SLURM
 - VirusSeeker 2.0 is designed to be used with SLURM Workload Manager

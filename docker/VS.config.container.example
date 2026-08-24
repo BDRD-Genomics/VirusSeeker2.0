@@ -1,0 +1,27 @@
+###############################################################################
+# Container-oriented configuration. The field names retain their upstream names
+# for compatibility, but local Docker execution does not require SLURM.
+###############################################################################
+
+# Resources assigned to each generated stage script.
+slurm_cpus_per_task=8
+slurm_mem=64g
+
+# Kept only so the same VS.config can still be used with runVS-slurm.
+slurm_partition="vs"
+
+# Software defaults
+diamond_args="--block-size 10 --iterate faster --index-chunks 1 --tmpdir /tmp"
+
+# Paths inside the container
+bin_path="/opt/virusseeker/third_party/"
+conda_prefix="/opt/conda"
+
+# Database/reference paths. Mount the host database root at /database.
+# ref must contain ref_viruses_rep_genomes.
+ref="/database/virusseeker/ref"
+nr="/database/virusseeker/nr.dmnd"
+mmseqsnt="/database/mmseqs/core_nt/core_nt"
+mmseqs_tmpdir="/scratch/mmseqs"
+virus_nr="/database/virusseeker/virus_nr"
+virus_nt="/database/virusseeker/virus_nt"
