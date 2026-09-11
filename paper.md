@@ -93,7 +93,8 @@ Two datasets from NCBI’s Sequence Read Archive (SRA) were selected for benchma
   - These results demonstrate the  rigorous false-positive filtering of VirusSeeker 2.0 to optimize for the detection of low-abundance novel viruses amid high background, which is unique in comparison to the other tools that excel more broadly at assembly and contig recovery for all domains of life and therefore these results exemplify the specific use case for which VirusSeeker 2.0 was developed – virus discovery.
 
 <a id="Table-1"></a>
-
+<i> **Table 1.** Summary of benchmarking results via VirusSeeker 2.0, MetaDetector, geNomad, CZID, kraken2, and mash.</i> \
+1A. Detection of virus
 | Tool | Specificity of DbPV detection | Specific Assignment | # reads classified at the lowest assignment | # contigs classified at the lowest assignment |
 | --- | --- | --- | --- | --- |
 | VirusSeeker 2.0 | high | DbPV | 1102 | 36 |
@@ -103,6 +104,7 @@ Two datasets from NCBI’s Sequence Read Archive (SRA) were selected for benchma
 | kraken2 | moderate | Bat Paramyxovirus Epo_spe/AR1/DRC/2009 (NC_038271) | 2 | 1 |
 | mash | moderate | Bat Paramyxovirus Epo_spe/AR1/DRC/2009n(NC_038271) | n/a | n/a |
 
+1B. Handling of hybrid mpox virus data
 | Tool | Specificity of DbPV detection | Specific Assignment | # reads classified at the lowest assignment | # contigs classified at the lowest assignment |
 | --- | --- | --- | --- | --- |
 | VirusSeeker 2.0* | high | MPXV (TaxID: 10244) | 11814 | 0* |
