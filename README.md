@@ -138,8 +138,27 @@ bash queue.sh -r <file containing paths to fastq files to be submit to the pipel
 	- VirusSeeker originally counted reads (stitched or unstitched) and contigs as "1" sequence
 	- The Supplemental Counts take into account stitching (counting stitched reads as 2) and assembly (counting the reads that were used to assemble the contigs)
 
-## Contact
-Reachback Support: usn.detrick.nmrc.mbx.genomics-reach-back@health.mil
+## Contributing to VirusSeeker2.0
+Thank you for your interest in VirusSeeker2.0. This file tells you how to get help, how to report a problem, and how to send a change.
+
+### Get help
+- Open a [Github Issue](https://github.com/BDRD-Genomics/VirusSeeker2.0/issues)
+- For questions that you cannot ask in public, send an email to our reachback support: usn.detrick.nmrc.mbx.genomics-reach-back@health.mil
+
+### Report a bug
+Open a [GitHub issue](https://github.com/BDRD-Genomics/VirusSeeker2.0/issues/new/choose) with the **Bug report** template. Give this information:
+1. Detailed description of the issue
+2. The command that is being run
+3. Logging and error messages generated
+4. System configurations
+
+### Send a pull request
+1. Fork the repository, and make a branch from `main`.
+2. Keep each pull request to one change. Write a description that says what changes and why.
+3. Add or update the tests.
+4. Update the documentation when the behavior changes.
+5. Validate functionality of all changes.
+
 
 ## Disclaimer
 
