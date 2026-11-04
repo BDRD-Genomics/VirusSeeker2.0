@@ -152,15 +152,15 @@ Open a [GitHub issue](https://github.com/BDRD-Genomics/VirusSeeker2.0/issues/new
 3. Logging and error messages generated
 4. System configurations
 
-### License
-This project uses the [MIT License](LICENSE). When you send a contribution, you agree that it is licensed under the same terms.
-
 ### Send a pull request
 1. Fork the repository, and make a branch from `main`.
 2. Keep each pull request to one change. Write a description that says what changes and why.
 3. Add or update the tests.
 4. Update the documentation when the behavior changes.
 5. Validate functionality of all changes.
+
+### License
+This project uses the [MIT License](LICENSE). When you send a contribution, you agree that it is licensed under the same terms.
 
 
 ## Disclaimer
