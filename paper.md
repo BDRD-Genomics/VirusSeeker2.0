@@ -142,17 +142,3 @@ The views expressed in this article are those of the authors and do not necessar
 We dedicate this work to the memory of Dr. Guoyan Zhao, Associate Professor of Genetics and Neurology at Washington University School of Medicine.  As the primary creator and lead developer of the original VirusSeeker pipeline, her pioneering work laid the critical computational foundation upon which `VirusSeeker 2.0` was built.
 
 # References
-1.	Bushnell B. 2014. BBMap: a fast, accurate, splice-aware aligner. Lawrence Berkeley National Lab (LBNL).
-2.	Chen S. 2023. Ultrafast one‐pass FASTQ data preprocessing, quality control, and deduplication using fastp. Imeta 2:e107.
-3.	Li H. 2018. Minimap2: pairwise alignment for nucleotide sequences. Bioinformatics 34:3094-3100.
-4.	Nurk S, Meleshko D, Korobeynikov A, Pevzner PA. 2017. metaSPAdes: a new versatile metagenomic assembler. Genome Res 27:824-834.
-5.	Bankevich A, Nurk S, Antipov D, Gurevich AA, Dvorkin M, Kulikov AS, Lesin VM, Nikolenko SI, Pham S, Prjibelski AD. 2012. SPAdes: a new genome assembly algorithm and its applications to single-cell sequencing. Journal of computational biology 19:455-477.
-6.	Wick RR, Judd LM, Gorrie CL, Holt KE. 2017. Unicycler: resolving bacterial genome assemblies from short and long sequencing reads. PLoS computational biology 13:e1005595.
-7.	Petit III RA. 2024. Dragonflye: assemble bacterial isolate genomes from nanopore reads. Github2021.
-8.	Buchfink B, Reuter K, Drost HG. 2021. Sensitive protein alignments at tree-of-life scale using DIAMOND. Nat Methods 18:366-368.
-9.	Huson DH, Auch AF, Qi J, Schuster SC. 2007. MEGAN analysis of metagenomic data. Genome research 17:377-386.
-10.	Adhikari BN, Paskey AC, Frey KG, Bennett AJ, Long KA, Kuhn JH, Hamilton T, Glang L, Cer RZ, Goldberg TL, Bishop-Lilly KA. 2024. Virome profiling of fig wasps (Ceratosolen spp.) reveals virus diversity spanning four realms. Virology 591:109992.
-11.	Bennett AJ, Paskey AC, Kuhn JH, Bishop-Lilly KA, Goldberg TL. 2020. Diversity, Transmission, and Cophylogeny of Ledanteviruses (Rhabdoviridae: Ledantevirus) and Nycteribiid Bat Flies Parasitizing Angolan Soft-Furred Fruit Bats in Bundibugyo District, Uganda. Microorganisms 8.
-12.	Paskey AC, Lim XF, Ng JHJ, Rice GK, Chia WN, Philipson CW, Foo R, Cer RZ, Long KA, Lueder MR, Glang L, Frey KG, Hamilton T, Mendenhall IH, Smith GJ, Anderson DE, Wang LF, Bishop-Lilly KA. 2023. Genomic Characterization of a Relative of Mumps Virus in Lesser Dawn Bats of Southeast Asia. Viruses 15.
-13.	Paskey AC, Ng JHJ, Rice GK, Chia WN, Philipson CW, Foo RJH, Cer RZ, Long KA, Lueder MR, Frey KG, Hamilton T, Mendenhall IH, Smith GJ, Wang LF, Bishop-Lilly KA. 2020. The temporal RNA virome patterns of a lesser dawn bat (Eonycteris spelaea) colony revealed by deep sequencing. Virus Evol 6:veaa017.
-14.	Bennett AJ, Paskey AC, Ebinger A, Pfaff F, Priemer G, Hoper D, Breithaupt A, Heuser E, Ulrich RG, Kuhn JH, Bishop-Lilly KA, Beer M, Goldberg TL. 2020. Relatives of rubella virus in diverse mammals. Nature 586:424-428.
